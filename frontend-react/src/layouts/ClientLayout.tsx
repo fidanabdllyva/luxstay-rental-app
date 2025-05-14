@@ -1,8 +1,11 @@
+import Header from "@/components/client/Header"
+import { Outlet } from "react-router"
 
 function ClientLayout() {
   return (
     <>
-    <h1>client layout</h1>
+    <Header/>
+    <Outlet/>
     </>
   )
 }

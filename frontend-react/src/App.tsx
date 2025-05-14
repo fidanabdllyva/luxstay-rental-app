@@ -1,11 +1,15 @@
-import { Button } from "./components/ui/button"
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import ROUTER from "./routes"
+import { ThemeProvider } from "./components/common/theme-provider"
 
 function App() {
+  const routes = createBrowserRouter(ROUTER)
 
   return (
     <>
-<h1 className="underline bg-amber-50">hello front</h1>
-    <Button>Click me</Button>
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+        <RouterProvider router={routes}></RouterProvider>
+      </ThemeProvider>
     </>
   )
 }
