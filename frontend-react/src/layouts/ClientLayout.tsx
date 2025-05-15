@@ -1,13 +1,19 @@
-import Header from "@/components/client/Header"
-import { Outlet } from "react-router"
+import Footer from "@/components/client/Footer";
+import Header from "@/components/client/Header";
+import { Outlet } from "react-router-dom"; 
 
 function ClientLayout() {
   return (
-    <>
-    <Header/>
-    <Outlet/>
-    </>
-  )
+    <div className="flex flex-col min-h-screen">
+      <Header />
+
+      <main className="flex-1">
+        <Outlet />
+      </main>
+
+      <Footer />
+    </div>
+  );
 }
 
-export default ClientLayout
+export default ClientLayout;

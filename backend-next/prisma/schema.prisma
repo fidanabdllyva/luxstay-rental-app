@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../app/generated/prisma"
 }
 
 datasource db {
@@ -15,23 +8,63 @@ datasource db {
 }
 
 // Enums
+
 enum Role {
-  admin
-  client
-  entrepreneur
+  ADMIN
+  CLIENT
+  HOST
 }
 
 enum ApartmentType {
-  island
-  apartment
-  villa
-  pool
+  ISLAND
+  APARTMENT
+  VINTAGE
+  VILLA
+  PENTHOUSE
+  GARDEN
+  POOL
 }
 
 enum BookingStatus {
-  pending
-  confirmed
-  cancelled
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum Feature {
+  WIFI
+  AC
+  HEATING
+  KITCHEN
+  PARKING
+  POOL
+  PET_FRIENDLY
+  WASHER
+  DRYER
+  GYM
+  ELEVATOR
+  BALCONY
+  HOT_TUB
+  BREAKFAST_INCLUDED
+  TV
+  SMOKE_DETECTOR
+  FIRE_EXTINGUISHER
+  FURNISHED
+  WHEELCHAIR_ACCESSIBLE
+  BABY_COT
+}
+
+enum Rule {
+  NO_SMOKING
+  NO_PETS
+  NO_PARTIES
+  QUIET_HOURS
+  CHECK_IN_AFTER_3PM
+  CHECK_OUT_BEFORE_11AM
+  NO_UNREGISTERED_GUESTS
+  CLEAN_UP_AFTER_YOURSELF
+  NO_ILLEGAL_ACTIVITIES
+  RESPECT_NEIGHBORS
 }
 
 // Models
@@ -41,24 +74,22 @@ model User {
   username     String      @unique
   email        String      @unique
   password     String
-  role         Role
-  profileImage String?     @default("https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541")
+  role         Role        @default(CLIENT)
+  profileImage String      @default("https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541")
   balance      Float       @default(0)
   hostRequest  Boolean     @default(false)
   isBanned     Boolean     @default(false)
   banDate      DateTime?
   createdAt    DateTime    @default(now())
   lastLogin    DateTime?
-
   apartments   Apartment[] @relation("EntrepreneurApartments")
-
   wishlist     Apartment[] @relation("Wishlist")
   bookings     Booking[]
   reviews      Review[]
 }
 
 model Apartment {
-  id             String       @id @default(uuid())
+  id             String        @id @default(uuid())
   title          String
   type           ApartmentType
   location       String
@@ -66,53 +97,39 @@ model Apartment {
   coverImage     String
   images         String[]
   description    String
-  features       String[]
-  rules          String[]
-  bookedDates    BookedDate[]
-  createdAt      DateTime     @default(now())
-
-  entrepreneur   User         @relation("EntrepreneurApartments", fields: [entrepreneurId], references: [id])
+  features       Feature[]
+  rules          Rule[]
+  createdAt      DateTime      @default(now())
+  entrepreneur   User          @relation("EntrepreneurApartments", fields: [entrepreneurId], references: [id])
   entrepreneurId String
-
   reviews        Review[]
-  avgRating      Float        @default(0)
-
-  wishlistedBy   User[]       @relation("Wishlist")
+  avgRating      Float         @default(0)
+  wishlistedBy   User[]        @relation("Wishlist")
   bookings       Booking[]
 }
 
-
-model BookedDate {
-  id           String   @id @default(uuid())
-  startDate    DateTime
-  endDate      DateTime
-
-  apartment    Apartment @relation(fields: [apartmentId], references: [id])
-  apartmentId  String
-}
-
 model Booking {
-  id           String    @id @default(uuid())
-  user         User      @relation(fields: [userId], references: [id])
-  userId       String
-  apartment    Apartment @relation(fields: [apartmentId], references: [id])
-  apartmentId  String
-  startDate    DateTime
-  endDate      DateTime
-  status       BookingStatus @default(pending)
-  totalPrice   Float
-  createdAt    DateTime  @default(now())
+  id          String        @id @default(uuid())
+  user        User          @relation(fields: [userId], references: [id])
+  userId      String
+  apartment   Apartment     @relation(fields: [apartmentId], references: [id])
+  apartmentId String
+  startDate   DateTime
+  endDate     DateTime
+  status      BookingStatus @default(PENDING)
+  totalPrice  Float
+  createdAt   DateTime      @default(now())
 }
 
 model Review {
-  id           String    @id @default(uuid())
-  user         User      @relation(fields: [userId], references: [id])
-  userId       String
-  apartment    Apartment @relation(fields: [apartmentId], references: [id])
-  apartmentId  String
-  rating       Int       @default(0) // 0-5 scale
-  comment      String
-  createdAt    DateTime  @default(now())
+  id          String    @id @default(uuid())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  apartment   Apartment @relation(fields: [apartmentId], references: [id])
+  apartmentId String
+  rating      Int       @default(0) 
+  comment     String
+  createdAt   DateTime  @default(now())
 }
 
 model Contact {
@@ -133,7 +150,8 @@ model Coupon {
 }
 
 model Slider {
-  id        String @id @default(uuid())
-  title     String
-  imageURL  String
+  id       String   @id @default(uuid())
+  title    String
+  imageURL String
+  page     String
 }
