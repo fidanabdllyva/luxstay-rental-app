@@ -1,5 +1,5 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Pagination } from 'swiper/modules';
+import { Autoplay } from 'swiper/modules';
 import type { Slide } from '@/types/slider'; 
 
 interface SliderProps {
@@ -12,10 +12,9 @@ export default function Slider({ slides }: SliderProps) {
     <div className="w-full mx-auto ">
       <Swiper
         spaceBetween={30}
-        pagination={{ clickable: true }}
         loop={true}
         autoplay={{ delay: 5000 }}
-        modules={[Autoplay, Pagination]}
+        modules={[Autoplay]}
         className=" overflow-hidden shadow-lg"
       >
         {slides.map((slide) => (
@@ -24,7 +23,7 @@ export default function Slider({ slides }: SliderProps) {
               <img
                 src={slide.imageURL}
                 alt={slide.title}
-                className="w-full h-140 object-cover"
+                className="w-full h-[85vh] object-cover"
               />
             </div>
           </SwiperSlide>

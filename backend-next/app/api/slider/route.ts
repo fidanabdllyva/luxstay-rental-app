@@ -3,11 +3,12 @@ import type { NextRequest } from 'next/server';
 import { findSlidersByPage } from '@/services/sliderService';
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const page = searchParams.get('page') || undefined;
-
+  
   try {
+    const { searchParams } = new URL(request.url);
+    const page = searchParams.get('page') || undefined;
     const sliders = await findSlidersByPage(page);
+    
     return NextResponse.json(sliders);
   } catch (error) {
     return NextResponse.json(
