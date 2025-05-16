@@ -36,8 +36,8 @@ export default function Home() {
       </section>
 
       <section>
-        <h3>Featured Apartments</h3>
-        <p>
+        <h3 className='text-3xl text-center mt-10 font-bold'>Featured Apartments</h3>
+        <p className='text-muted-foreground text-center mt-3 w-2xl mx-auto'>
           Discover our handpicked selection of premium apartments, offering exceptional comfort and style
           for your next stay.
         </p>

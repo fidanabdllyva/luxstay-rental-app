@@ -17,8 +17,8 @@ const HeroHome = () => {
           Discover luxury apartments and unique stays around the world
         </p>
 
-        <div className="bg-muted backdrop-blur-md p-4 rounded-xl items-center shadow-md flex flex-wrap gap-2 md:gap-4  justify-center max-w-4xl">
-          <select className="px-4 py-2 text-sm rounded-md border bg-white border-gray-300 text-black">
+        <div className="bg-muted backdrop-blur-md p-4 rounded-lg items-center shadow-md flex flex-wrap gap-2 md:gap-4  justify-center max-w-4xl">
+          <select className="px-4 py-2 text-sm rounded-md border bg-white border-gray-300 text-muted-foreground">
             <option value="">Location</option>
             <option value="baku">Baku</option>
             <option value="istanbul">Istanbul</option>
@@ -29,7 +29,7 @@ const HeroHome = () => {
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                className="w-40 justify-start text-left font-normal text-black"
+                className="w-40 justify-start text-left font-normal text-muted-foreground"
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {checkIn ? format(checkIn, 'PPP') : 'Check in'}
@@ -49,7 +49,7 @@ const HeroHome = () => {
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                className="w-40 justify-start text-left font-normal text-black"
+                className="w-40 justify-start text-left font-normal text-muted-foreground"
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {checkOut ? format(checkOut, 'PPP') : 'Check out'}

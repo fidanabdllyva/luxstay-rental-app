@@ -3,13 +3,19 @@ import type { NextRequest } from 'next/server';
 import { findSlidersByPage } from '@/services/sliderService';
 
 export async function GET(request: NextRequest) {
-  
+
   try {
     const { searchParams } = new URL(request.url);
     const page = searchParams.get('page') || undefined;
     const sliders = await findSlidersByPage(page);
-    
-    return NextResponse.json(sliders);
+
+    return NextResponse.json(
+      {
+        message: 'Apartments fetched successfully',
+        data: sliders,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json(
       { message: 'Failed to fetch sliders', error: String(error) },

@@ -47,16 +47,16 @@ const ROUTER = [
             },
             {
                 path: "apartments",
-                grandchildren: [
+                children: [
                     {
                         index: true,
                         element: <Apartments />
                     },
                     {
-                        path: "/:id",
+                        path: ":id",
                         element: <ApartmentDetails />
-                    }
-                ]
+                    },
+                ],
             },
             {
                 path: "contact",
@@ -72,17 +72,13 @@ const ROUTER = [
                 element: <ClientProfile />
             },
             {
-                path: "*",
-                element: <NotFound />,
-            },
-            {
                 path: "login",
                 element: <Login />
             },
             {
                 path: "register",
                 element: <Register />
-            }
+            },
         ]
     },
 
@@ -124,10 +120,6 @@ const ROUTER = [
                 path: "profile",
                 element: <AdminProfile />
             },
-            {
-                path: "*",
-                element: <NotFound />,
-            }
 
         ]
     },
@@ -154,12 +146,12 @@ const ROUTER = [
                 path: "profile",
                 element: <HostProfile />
             },
-            {
-                path: "*",
-                element: <NotFound />,
-            }
         ]
-    }
+    },
+    {
+        path: "*",
+        element: <NotFound />,
+    },
 ]
 
 export default ROUTER

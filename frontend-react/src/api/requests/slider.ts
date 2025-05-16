@@ -3,6 +3,6 @@ import instance from "../axios-instance";
 import { endpoints } from "../constants";
 
 export async function getSlider(): Promise<Slide[] | null> {
-  const { data: slider } = await instance.get(endpoints.slider);
-  return slider;
+  const response = await instance.get<{ message: string; data: Slide[] }>(endpoints.slider);
+  return response.data.data;
 }
