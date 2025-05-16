@@ -12,7 +12,7 @@ export default function Home() {
   const [apartments, setApartments] = useState<Apartment[]>([]);
 
   useEffect(() => {
-    getSlider().then((_slides) => {
+    getSlider('home').then((_slides) => {
       if (_slides) {
         setSlides(_slides);
       }
@@ -25,7 +25,6 @@ export default function Home() {
     });
   }, []);
 
-  console.log(slides)
   return (
     <>
       <section className="relative h-[85vh] w-full overflow-hidden">
