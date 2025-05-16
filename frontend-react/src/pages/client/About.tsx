@@ -1,5 +1,6 @@
 import { getSlider } from "@/api/requests/slider";
 import Slider from "@/components/client/Slider";
+import TeamMembersAbout from "@/components/client/TeamMembersAbout";
 import type { Slide } from "@/types/slider";
 import { useEffect, useState } from "react";
 
@@ -15,6 +16,7 @@ const About = () => {
   }, []);
 
   return (
+    <>
     <section className="relative h-[75vh] w-full overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/30 z-10" />
 
@@ -29,6 +31,11 @@ const About = () => {
         </p>
       </div>
     </section>
+
+    <section>
+      <TeamMembersAbout/>
+    </section>
+    </>
   );
 };
 
