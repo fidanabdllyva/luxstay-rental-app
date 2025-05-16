@@ -1,6 +1,7 @@
 import { getSlider } from "@/api/requests/slider";
 import Slider from "@/components/client/Slider";
 import TeamMembersAbout from "@/components/client/TeamMembersAbout";
+import ValuesAbout from "@/components/client/ValuesAbout";
 import type { Slide } from "@/types/slider";
 import { useEffect, useState } from "react";
 
@@ -34,6 +35,10 @@ const About = () => {
 
     <section>
       <TeamMembersAbout/>
+    </section>
+
+    <section>
+      <ValuesAbout/>
     </section>
     </>
   );
