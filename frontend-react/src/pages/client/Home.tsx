@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import Slider from '@/components/client/Slider';
 import type { Slide } from '@/types/slider';
 import { getSlider } from '@/api/requests/slider';
-import { getApartments } from '@/api/requests/apartments'; 
 import HeroHome from '@/components/client/HeroHome';
-import type { Apartment } from '@/types/apartments';
+import ApartmentCard from '@/components/client/ApartmentCard';
+import { Link } from 'react-router';
+import { Button } from '@/components/ui/button';
 
 
 export default function Home() {
   const [slides, setSlides] = useState<Slide[]>([]);
-  const [apartments, setApartments] = useState<Apartment[]>([]);
 
   useEffect(() => {
     getSlider('home').then((_slides) => {
@@ -17,13 +17,9 @@ export default function Home() {
         setSlides(_slides);
       }
     });
-
-    getApartments().then((_apartments) => {
-      if (_apartments) {
-        setApartments(_apartments);
-      }
-    });
   }, []);
+
+   
 
   return (
     <>
@@ -40,19 +36,13 @@ export default function Home() {
           Discover our handpicked selection of premium apartments, offering exceptional comfort and style
           for your next stay.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
-          {apartments.map((apt) => (
-            <div key={apt.id} className="border rounded shadow p-4">
-              <img
-                src={apt.coverImage}
-                alt={apt.title}
-                className="w-full h-48 object-cover rounded"
-              />
-              <h4 className="mt-2 font-semibold">{apt.title}</h4>
-              <p className="text-sm text-gray-600">{apt.description}</p>
-              <p className="mt-1 font-bold">${apt.pricePerNight} / night</p>
-            </div>
-          ))}
+        <div className="grid px-5 grid-cols-1 md:grid-cols-4 gap-6 mt-4">
+          <ApartmentCard />
+        </div>
+        <div className='flex justify-center mt-6 mb-10'>
+          <Button className=' px-6 py-5' variant={"outline"}>
+            <Link to={"/apartments"}> View All Apartments</Link>
+          </Button>
         </div>
       </section>
     </>
