@@ -4,6 +4,7 @@ import { Heart, Star } from "lucide-react";
 import type { Apartment } from "@/types/apartments";
 import { Link } from "react-router";
 import { SkeletonCard } from "./SkeletonCard";
+import { formatEnumLabel } from "@/utils/helper";
 
 export default function ApartmentCard() {
   const [apartments, setApartments] = useState<Apartment[]>([]);
@@ -31,10 +32,10 @@ export default function ApartmentCard() {
 
   return (
     <>
-      {apartments.map((apartment, index) => (
+      {apartments.map((apartment) => (
         <div
-          key={index}
-          className="max-w-xs  bg-white rounded-lg shadow-md overflow-hidden mb-6"
+          key={apartment.id}
+          className="max-w-xs dark:bg-muted bg-white rounded-lg shadow-md overflow-hidden mb-6"
         >
           <div className="relative bg-gray-200 h-48 flex items-center justify-center">
             {apartment.coverImage ? (
@@ -47,44 +48,44 @@ export default function ApartmentCard() {
               <span className="text-gray-400 text-3xl">🖼</span>
             )}
 
-            <div className="absolute top-2 left-2 bg-black text-white text-xs px-2 py-1 rounded-full font-semibold">
-              {apartment.type || "Loft"}
+            <div className="absolute  top-2 left-2 bg-black text-white text-xs px-2 py-1 rounded-full font-semibold">
+              {formatEnumLabel(apartment.type)}
             </div>
 
             <button
               aria-label="Favorite"
               className="absolute top-2 right-2 bg-white rounded-full p-2 shadow hover:bg-gray-100"
             >
-              <Heart className="w-4 h-4" />
+              <Heart className="w-4 h-4 dark:text-black" />
             </button>
           </div>
 
           <div className="p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">
-              {apartment.title || "Modern Downtown Loft"}
+            <h3 className="text-lg font-semibold  mb-1">
+              {apartment.title}
             </h3>
-            <p className="text-sm text-gray-500 mb-2">
-              {apartment.location || "New York, NY"}
+            <p className="text-sm text-gray-500 dark:text-gray-300 mb-2">
+              {apartment.location}
             </p>
 
             <div className="flex items-center gap-2 mb-3">
               <Star className="w-4 h-4 text-yellow-400" />
-              <span className="text-sm font-medium text-gray-900 mr-1">
+              <span className="text-sm font-medium  mr-1">
                 {apartment.avgRating}
               </span>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-gray-500 dark:text-gray-300">
                 ({apartment.reviews?.length} reviews)
               </span>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-lg font-bold text-gray-900">
+              <span className="text-lg font-bold ">
                 ${apartment.pricePerNight}{" "}
-                <span className="text-base font-normal text-gray-600">
+                <span className="text-base font-normal text-gray-600 dark:text-gray-300">
                   / night
                 </span>
               </span>
-              <Link to={`/apartments/${apartment.id}`} className="text-sm text-gray-700 border border-gray-300 px-4 py-1 rounded hover:bg-gray-100">
+              <Link to={`/apartments/${apartment.id}`} className="text-sm text-gray-700 dark:text-gray-300 border border-gray-300 px-4 py-1 rounded hover:bg-gray-100">
                 View Details
               </Link>
             </div>

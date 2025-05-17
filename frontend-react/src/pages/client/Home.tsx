@@ -36,7 +36,7 @@ export default function Home() {
           Discover our handpicked selection of premium apartments, offering exceptional comfort and style
           for your next stay.
         </p>
-        <div className="grid px-5 grid-cols-1 md:grid-cols-4 gap-6 mt-4">
+        <div className="grid px-7 grid-cols-1 md:grid-cols-4 gap-6 mt-4">
           <ApartmentCard />
         </div>
         <div className='flex justify-center mt-6 mb-10'>
