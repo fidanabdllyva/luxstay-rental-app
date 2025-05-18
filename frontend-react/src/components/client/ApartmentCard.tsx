@@ -13,11 +13,12 @@ export default function ApartmentCard({ apartments = [], isLoading }: ApartmentC
   if (isLoading) {
     return (
       <>
-        {Array(4)
+        {Array(8)
           .fill(null)
           .map((_, i) => (
             <SkeletonCard key={i} />
           ))}
+    
       </>
     );
   }
@@ -53,7 +54,7 @@ export default function ApartmentCard({ apartments = [], isLoading }: ApartmentC
           </div>
 
           <div className="p-4">
-            <h3 className="text-lg font-semibold mb-1">{apartment.title}</h3>
+            <h3 className="text-lg font-semibold mb-1 h-[50px]">{apartment.title}</h3>
             <p className="text-sm text-gray-500 dark:text-gray-300 mb-2">
               {apartment.location}
             </p>

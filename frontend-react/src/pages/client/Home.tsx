@@ -8,7 +8,6 @@ import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { getApartments } from '@/api/requests/apartments';
 import type { Apartment } from '@/types/apartments';
-import { SkeletonCard } from '@/components/client/SkeletonCard';
 
 
 export default function Home() {
@@ -29,8 +28,6 @@ export default function Home() {
       setLoading(false);
     });
   }, []);
-
-
 
 
   return (
