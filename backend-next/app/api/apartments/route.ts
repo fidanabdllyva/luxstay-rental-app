@@ -5,10 +5,6 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const type = searchParams.get('type') || undefined;
-    const location = searchParams.get('location') || undefined;
-    const entrepreneurId = searchParams.get('entrepreneurId') || undefined;
-
     const id = searchParams.get("id")
 
     if (id) {
