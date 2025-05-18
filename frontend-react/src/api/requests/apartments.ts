@@ -11,6 +11,6 @@ export async function getApartments(): Promise<Apartment[]> {
   const response = await instance.get<{ message: string; data: Apartment[] }>(
      `${endpoints.apartments}?id=${id}`,{params:{id}}
   );
-  return response.data[0]
+  return response.data.data[0] || null
 }
 

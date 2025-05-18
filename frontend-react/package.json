@@ -36,6 +36,7 @@
     "@types/node": "^22.15.17",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+    "@types/react-lottie": "^1.2.10",
     "@types/swiper": "^5.4.3",
     "@vitejs/plugin-react-swc": "^3.9.0",
     "eslint": "^9.25.0",

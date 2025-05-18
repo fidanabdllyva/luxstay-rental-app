@@ -2,6 +2,7 @@ import animationData from "@/lotties/404-not-found.json";
 import Lottie from 'react-lottie';
 import { Link } from "react-router";
 
+
 const NotFound = () => {
   const defaultOptions = {
     loop: true,
