@@ -6,3 +6,11 @@ export async function getApartments(): Promise<Apartment[]> {
   const response = await instance.get<{ message: string; data: Apartment[] }>(endpoints.apartments);
   return response.data.data;
 }
+
+ export async function getApartmentById(id: string): Promise<Apartment | null> {
+  const response = await instance.get<{ message: string; data: Apartment[] }>(
+     `${endpoints.apartments}?id=${id}`,{params:{id}}
+  );
+  return response.data[0]
+}
+

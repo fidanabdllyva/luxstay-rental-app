@@ -19,3 +19,8 @@ export async function getApartments(filters?: {
     },
   });
 }
+
+export async function getApartmentById(id: string){
+  return prisma.apartment.findUnique(
+    { where: { id } });
+}
