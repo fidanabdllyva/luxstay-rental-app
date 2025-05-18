@@ -6,10 +6,15 @@ import HeroHome from '@/components/client/HeroHome';
 import ApartmentCard from '@/components/client/ApartmentCard';
 import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
+import { getApartments } from '@/api/requests/apartments';
+import type { Apartment } from '@/types/apartments';
+import { SkeletonCard } from '@/components/client/SkeletonCard';
 
 
 export default function Home() {
   const [slides, setSlides] = useState<Slide[]>([]);
+  const [apartments, setApartments] = useState<Apartment[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getSlider('home').then((_slides) => {
@@ -17,9 +22,16 @@ export default function Home() {
         setSlides(_slides);
       }
     });
+    getApartments().then((_apartments) => {
+      if (_apartments) {
+        setApartments(_apartments);
+      }
+      setLoading(false);
+    });
   }, []);
 
-   
+
+
 
   return (
     <>
@@ -37,7 +49,8 @@ export default function Home() {
           for your next stay.
         </p>
         <div className="grid px-7 grid-cols-1 md:grid-cols-4 gap-6 mt-4">
-          <ApartmentCard />
+          <ApartmentCard apartments={apartments.slice(0, 4)}
+            isLoading={loading} />
         </div>
         <div className='flex justify-center mt-6 mb-10'>
           <Button className=' px-6 py-5' variant={"outline"}>
