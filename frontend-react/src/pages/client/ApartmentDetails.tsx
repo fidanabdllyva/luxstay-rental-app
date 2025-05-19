@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { Apartment } from "@/types/apartments";
 import { getApartmentById } from "@/api/requests/apartments";
+import SkeletonDetailPage from "@/components/client/SkeletonDetailPage";
 
 const ApartmentDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,13 +18,22 @@ const ApartmentDetails = () => {
     }
 
     getApartmentById(id)
-      .then((data) => setApartment(data))
+      .then((data) => {
+        console.log("API response:", data);
+        setApartment(data);
+      })
       .catch(() => setError("Failed to fetch apartment details"))
       .finally(() => setLoading(false));
+
   }, [id]);
-  if (loading) return <div>Loading apartment details...</div>;
+
+  if (loading) return <SkeletonDetailPage/>
+  
+
+
   if (error) return <div className="text-red-500">{error}</div>;
   if (!apartment) return <div>No apartment found.</div>;
+
 
   return (
     <div className="p-4">

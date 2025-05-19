@@ -7,10 +7,10 @@ export async function getApartments(): Promise<Apartment[]> {
   return response.data.data;
 }
 
- export async function getApartmentById(id: string): Promise<Apartment | null> {
-  const response = await instance.get<{ message: string; data: Apartment[] }>(
-     `${endpoints.apartments}?id=${id}`,{params:{id}}
+export async function getApartmentById(id: string): Promise<Apartment | null> {
+  const response = await instance.get<{ message: string; data: Apartment | null }>(
+    `${endpoints.apartments}?id=${id}`,
+    { params: { id } }
   );
-  return response.data.data[0] || null
+  return response.data.data;
 }
-

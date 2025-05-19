@@ -24,6 +24,7 @@ const SearchSortFilter = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("all");
   const [sortOrder, setSortOrder] = useState("recommended");
+  
 
   const apartmentTypes = useMemo(() => {
     const types = Array.from(new Set(apartments.map((apt) => apt.type)));
@@ -44,8 +45,8 @@ const SearchSortFilter = ({
       );
     }
 
-    if (sortOrder === "newest") {
-      filtered.sort((a, b) => Number(new Date(b.createdAt)) - Number(new Date(a.createdAt)));
+    if (sortOrder === "highest-price") {
+      filtered.sort((a, b) =>b.pricePerNight - a.pricePerNight);
     } else if (sortOrder === "lowest-price") {
       filtered.sort((a, b) => a.pricePerNight - b.pricePerNight);
     } else if (sortOrder === "highest-rated") {
@@ -86,7 +87,7 @@ const SearchSortFilter = ({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="recommended">Recommended</SelectItem>
-          <SelectItem value="newest">Newest</SelectItem>
+          <SelectItem value="highest-price">Highest Price</SelectItem>
           <SelectItem value="lowest-price">Lowest Price</SelectItem>
           <SelectItem value="highest-rated">Highest Rated</SelectItem>
         </SelectContent>
