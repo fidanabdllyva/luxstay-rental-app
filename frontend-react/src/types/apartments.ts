@@ -1,3 +1,7 @@
+import type { Booking } from "./bookings";
+import type { Review } from "./reviews";
+import type { User } from "./users";
+
 export type ApartmentType =
   | 'ISLAND'
   | 'APARTMENT'
@@ -43,32 +47,6 @@ export type Rule =
 
 export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED';
 
-export interface User {
-  id: string;
-  username?: string;
-  email?: string;
-  role: 'Client' | 'Entrepreneur' | 'Admin';
-}
-
-export interface Review {
-  id: string;
-  userId: string;
-  apartmentId: string;
-  rating: number;
-  comment: string;
-  createdAt: string; // ISO date string
-}
-
-export interface Booking {
-  id: string;
-  userId: string;
-  apartmentId: string;
-  startDate: string; // ISO date string
-  endDate: string;   // ISO date string
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
-  totalPrice: number;
-  createdAt: string; // ISO date string
-}
 
 export interface Apartment {
   id: string;
@@ -81,7 +59,7 @@ export interface Apartment {
   description: string;
   features: Feature[];
   rules: Rule[];
-  createdAt: string; // ISO date string
+  createdAt: string; 
   entrepreneurId: string;
   entrepreneur?: User;
   reviews?: Review[];

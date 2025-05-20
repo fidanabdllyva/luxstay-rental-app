@@ -4,7 +4,9 @@ import type { Apartment } from "@/types/apartments";
 import { getApartmentById } from "@/api/requests/apartments";
 import SkeletonDetailPage from "@/components/client/SkeletonDetailPage";
 import SliderDetailPage from "@/components/client/SliderDetailPage";
-import { MapPin } from "lucide-react";
+import { MapPin, Star } from "lucide-react";
+import DetailsTabs from "@/components/client/DetailsTabs";
+
 
 const ApartmentDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,7 +23,6 @@ const ApartmentDetails = () => {
 
     getApartmentById(id)
       .then((data) => {
-        console.log("API response:", data);
         setApartment(data);
       })
       .catch(() => setError("Failed to fetch apartment details"))
@@ -42,17 +43,44 @@ const ApartmentDetails = () => {
 
       <SliderDetailPage apartment={apartment} />
       <div className="p-4">
-        <h1 className="text-3xl font-bold mb-2">{apartment.title}</h1>
+        <div className="flex">
 
-        <div className="flex items-center gap-1">
-        <MapPin size={15}/>
-        <p className="text-md">{apartment.location }</p>
-        </div>
 
-        <div>
+          <div>
+
+            <h1 className="text-3xl font-bold mb-2">{apartment.title}</h1>
+
+            <div className="flex items-center justify-between">
+
+              <div className="flex items-center gap-1">
+                <MapPin size={15} />
+                <p className="text-md">{apartment.location}</p>
+              </div>
+
+              <div className="flex gap-1 items-center">
+                <Star className="text-yellow-500" size={20} />
+                <span className="font-semibold">{apartment.avgRating}</span>
+                <span>({apartment.reviews?.length || 0} {apartment.reviews?.length === 1 ? "review" : "reviews"})</span>
+              </div>
+
+
+            </div>
+
+            <div>
+              <DetailsTabs apartment={apartment}/>
+
+            </div>
+          </div>
+
+
+
+          {/* calendar */}
+          <div>
+            <p>salam</p>
+          </div>
+
+
         </div>
-        <p><strong>Price:</strong> ${apartment.pricePerNight}</p>
-        <p className="mt-2"><strong>Description:</strong> {apartment.description}</p>
       </div>
     </>
   );
