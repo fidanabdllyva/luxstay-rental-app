@@ -1,9 +1,50 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+
+@import "swiper/css";
+
 @import "swiper/css/pagination";
 @import "swiper/css/scrollbar";
-@import "swiper/css";
 @import "swiper/css/effect-coverflow";
+@import "swiper/css/navigation";
+
+/* details page slider buttons */
+.swiper-button-next,
+.swiper-button-prev {
+  @apply bg-muted font-medium h-10 w-10 text-black p-3 rounded-full opacity-80 hover:opacity-100 flex items-center justify-center;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 15px; 
+  color: black; /* Tailwind doesn't apply here – use raw CSS */
+
+}
+
+.swiper-button-next::after {
+  content: 'ᐳ'; 
+}
+
+.swiper-button-prev::after {
+  content: 'ᐸ';
+}
+
+/* Default dots */
+.swiper-pagination-bullet {
+  background-color: #d1d5db; 
+  opacity: 0.6;
+
+}
+
+/* Active dot */
+.swiper-pagination-bullet-active {
+  background-color: #eeeeee; 
+  opacity: 1;
+
+}
+
+
+
 
 
 @custom-variant dark (&:is(.dark *));
