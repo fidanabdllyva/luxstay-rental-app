@@ -17,10 +17,33 @@ export async function getApartments(filters?: {
     orderBy: {
       createdAt: 'desc',
     },
+    include: {
+      entrepreneur: true,
+      reviews: true,
+      wishlistedBy: true,
+      bookings: true,
+    },
   });
 }
 
-export async function getApartmentById(id: string){
-  return prisma.apartment.findUnique(
-    { where: { id } });
+
+export async function getApartmentById(id: string) {
+  return prisma.apartment.findUnique({
+    where: { id },
+    include: {
+      entrepreneur: true,
+      reviews: {
+        include: {
+          user: true,
+        },
+      },
+      wishlistedBy: true,
+      bookings: {
+        include: {
+          user: true,
+        },
+      },
+    },
+  });
 }
+
