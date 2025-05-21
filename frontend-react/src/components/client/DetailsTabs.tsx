@@ -92,7 +92,10 @@ const DetailsTabs = ({ apartment }: DetailsTabsProps) => {
 
                     </div>
                 </TabsContent>
-                <TabsContent value="location">Change your password here.</TabsContent>
+                <TabsContent value="location">
+                      <h3 className="text-xl font-bold mt-3 mb-2">Location</h3>
+                      <p className="text-md font-semibold">{apartment.location}</p>
+                </TabsContent>
             </Tabs>
 
         </>

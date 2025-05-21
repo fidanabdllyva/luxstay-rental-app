@@ -88,7 +88,7 @@ const ROUTER = [
         element: <AdminLayout />,
         children: [
             {
-                index: true,
+                path:"dashboard",
                 //protected sey for admin
                 element: <AdminDashboard />
             },
