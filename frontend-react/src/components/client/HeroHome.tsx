@@ -4,10 +4,20 @@ import { Calendar } from '@/src/components/ui/calendar';
 import { Popover } from '@radix-ui/react-popover';
 import { PopoverContent, PopoverTrigger } from '@/src/components/ui/popover';
 import { format } from "date-fns";
-import { useState } from 'react';
-const HeroHome = () => {
+import { useMemo, useState } from 'react';
+import type { Apartment } from '@/types/apartments';
+
+type HeroHomeProps={
+  apartments:Apartment[]
+}
+const HeroHome = ({apartments}:HeroHomeProps) => {
       const [checkIn, setCheckIn] = useState<Date | undefined>();
       const [checkOut, setCheckOut] = useState<Date | undefined>();
+
+      const apartmentLocation=useMemo(()=>{
+        const locations=Array.from(new Set(apartments.map((apt)=>apt.location)))
+        return locations
+      },[apartments])
   return (
      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center text-white px-4">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
@@ -20,9 +30,10 @@ const HeroHome = () => {
         <div className="bg-muted backdrop-blur-md p-4 rounded-lg items-center shadow-md flex flex-wrap gap-2 md:gap-4  justify-center max-w-4xl">
           <select className="px-4 py-2 text-sm rounded-md border bg-white border-gray-300 text-muted-foreground">
             <option value="">Location</option>
-            <option value="baku">Baku</option>
-            <option value="istanbul">Istanbul</option>
-            <option value="paris">Paris</option>
+            {apartmentLocation.map((location)=>(
+              <option key={location} value={location}>{location}</option>
+            ))}
+           
           </select>
 
           <Popover>

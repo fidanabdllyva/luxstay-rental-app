@@ -9,6 +9,7 @@ export const registerSchema = Yup.object({
   username: Yup.string()
     .min(3, "Username must be at least 3 characters")
     .max(20, "Username must be under 20 characters")
+     .matches(/^[a-z0-9_]+$/, 'Only lowercase letters, numbers, and underscores (_) are allowed')
     .required("Username is required"),
   email: Yup.string().email("Invalid email format").required("Email is required"),
   password: Yup.string()

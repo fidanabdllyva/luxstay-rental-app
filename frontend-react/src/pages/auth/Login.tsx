@@ -17,10 +17,10 @@ const Login = () => {
   return (
     <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white dark:bg-neutral-700 py-8 px-4 shadow-lg sm:rounded-lg sm:px-10">
+        <div className="bg-white dark:bg-neutral-800 py-8 px-4 shadow-lg sm:rounded-lg sm:px-10">
           <div className="text-center mb-8">
             <h2 className="text-2xl sm:text-3xl font-bold">Welcome Back</h2>
-            <p className="mt-2 text-sm text-gray-600">Please sign in to your account</p>
+            <p className="mt-2 text-sm dark:text-white text-gray-600">Please sign in to your account</p>
           </div>
 
           <Formik
@@ -29,14 +29,14 @@ const Login = () => {
             onSubmit={async (values) => {
               const res = await dispatch(loginUser(values));
               if (res.meta.requestStatus === "fulfilled") {
-                navigate("/"); // Redirect after successful login
+                navigate("/"); 
               }
             }}
           >
             {() => (
               <Form className="space-y-6">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
+                  <label htmlFor="email" className="block text-sm font-medium dark:text-white text-gray-700">Email Address</label>
                   <Field
                     name="email"
                     type="email"
@@ -46,7 +46,7 @@ const Login = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                  <label htmlFor="password" className="block text-sm dark:text-white font-medium text-gray-700">Password</label>
                   <div className="mt-1 relative">
                     <Field
                       name="password"
@@ -69,7 +69,7 @@ const Login = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-2 px-4 rounded-lg text-white bg-black hover:bg-gray-800"
+                  className="w-full py-2 px-4 rounded-lg dark:bg-white dark:text-black text-white bg-black hover:bg-gray-800"
                 >
                   {loading ? "Signing In..." : "Sign In"}
                 </button>
@@ -77,9 +77,9 @@ const Login = () => {
             )}
           </Formik>
 
-          <p className="mt-6 text-center text-sm text-gray-700">
+          <p className="mt-6 text-center text-sm dark:text-white text-gray-700">
             Don’t have an account?{" "}
-            <Link to="/register" className="font-medium text-blue-600 hover:underline">
+            <Link to="/register" className="font-medium  hover:underline">
               Sign up now
             </Link>
           </p>

@@ -138,7 +138,7 @@ const SearchSortFilter = ({
         </button>
 
       </div>
-      <p className="w-full mt-6 text-gray-700 text-md">
+      <p className="w-full mt-6 text-gray-700 dark:text-gray-200 text-md">
         {isLoading
           ? "Loading..."
           : `${apartmentFound.length} apartment${apartmentFound.length !== 1 ? "s" : ""
