@@ -26,9 +26,10 @@ const FilterSidebar = ({
 }: FilterSidebarProps) => {
 
     const apartmentFeatures = useMemo(() => {
-        const types = Array.from(new Set(apartments.map((apt) => apt.features)));
-        return types;
+        const allFeatures = apartments.flatMap((apt) => apt.features || []);
+        return Array.from(new Set(allFeatures));
     }, [apartments]);
+
     return (
         <>
             {visible && (
