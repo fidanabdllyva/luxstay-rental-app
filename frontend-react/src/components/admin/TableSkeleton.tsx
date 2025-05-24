@@ -12,7 +12,7 @@ type SkeletonTableProps = {
   rowsCount?: number;
 };
 
-const SkeletonTable = ({ columns, rowsCount = 8 }: SkeletonTableProps) => {
+const SkeletonTable = ({ columns=[], rowsCount = 8 }: SkeletonTableProps) => {
   const rows = Array.from({ length: rowsCount });
 
   return (
