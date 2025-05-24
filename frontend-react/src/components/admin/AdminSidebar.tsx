@@ -1,4 +1,4 @@
-import { Building2, Calendar, CheckCheck, Images, LayoutDashboard, LogOut, MessageSquare, Users } from "lucide-react"
+import { Building2, Calendar, Images, LayoutDashboard, LogOut, MessageSquare, Users } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
 
 import {
@@ -44,11 +44,6 @@ const items = [
     title: "Sliders",
     url: "/admin/sliders",
     icon: Images,
-  },
-  {
-    title: "Host Requests",
-    url: "/admin/requests",
-    icon: CheckCheck,
   },
 ]
 

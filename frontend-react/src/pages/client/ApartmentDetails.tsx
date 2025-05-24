@@ -38,7 +38,6 @@ const ApartmentDetails = () => {
   if (error) return <div className="text-center py-5 text-lg text-red-500">{error}</div>;
   if (!apartment) return <div>No apartment found.</div>;
 
-  //  just for test
   const handleDateChange = (checkIn: Date | null, checkOut: Date | null) => {
     console.log('Check-In:', checkIn);
     console.log('Check-Out:', checkOut);
