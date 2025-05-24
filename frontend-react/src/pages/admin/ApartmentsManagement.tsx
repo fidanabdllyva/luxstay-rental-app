@@ -9,7 +9,9 @@ import {
   TableRow,
 } from "@/src/components/ui/table"
 import type { Apartment } from "@/types/apartments"
+import { Eye, Trash } from "lucide-react"
 import { useEffect, useState } from "react"
+import { Link } from "react-router"
 
 const ApartmentsManagement = () => {
   const [apartments, setApartments] = useState<Apartment[]>([])
@@ -112,7 +114,14 @@ const ApartmentsManagement = () => {
                   <TableCell>{apartment.avgRating.toFixed(1)}</TableCell>
                   <TableCell>{new Date(apartment.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>
-                    <button className="text-blue-600 hover:underline">Edit</button>
+                    <div className="flex items-center gap-2">
+
+                    <Link replace target="blank" to={`/apartments/${apartment.id}`}>
+                      <Eye size={18}/>
+                      </Link>
+
+                      <Trash  size={18}/>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

@@ -10,7 +10,7 @@ type ApartmentSliderProps = {
 };
 
 export default function ApartmentSlider({ apartment }: ApartmentSliderProps) {
-  const images = apartment.images;
+  const images = apartment.images ?? [];
   let navigate = useNavigate();
   const [liked, setLiked] = useState(false);
 
