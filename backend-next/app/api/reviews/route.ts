@@ -6,12 +6,12 @@ export async function GET(request: NextRequest) {
 
     try {
 
-        const sliders = await getReviews()
+        const reviews = await getReviews()
 
         return NextResponse.json(
             {
                 message: 'Reviews fetched successfully',
-                data: sliders,
+                data: reviews,
             },
             { status: 200 }
         );
