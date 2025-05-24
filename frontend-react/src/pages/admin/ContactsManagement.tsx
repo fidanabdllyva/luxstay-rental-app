@@ -128,7 +128,7 @@ const AdminApartments = () => {
                             </Button>
                           </DialogTrigger>
 
-                          <DialogContent className="overflow-hidden">
+                          <DialogContent className="max-w-2xl">
                             <DialogHeader>
                               <DialogTitle>Message from {contact.fullName}</DialogTitle>
                               <DialogDescription>
@@ -140,13 +140,13 @@ const AdminApartments = () => {
                               </div>
                               <div className="mt-4">
                                 <DialogTitle>Message</DialogTitle>
-                                <DialogDescription>{contact.message}</DialogDescription>
+                                <DialogDescription className="break-words max-w-md">{contact.message}</DialogDescription>
                               </div>
                             </DialogHeader>
                             {contact.isRead ? <></>
                             :
                             <div className=" bottom-4 right-4 left-4">
-                              <Button onClick={() => readMessage(contact.id)} className="w-full">
+                              <Button onClick={() => readMessage(contact.id)} className="max-w-2xl">
                                 <Check className="w-4 h-4 mr-2" />
                                 Mark as Read
                               </Button>
@@ -160,7 +160,7 @@ const AdminApartments = () => {
                           onClick={() => readMessage(contact.id)}
                           variant="ghost"
                           size="icon"
-                          className="cursor-pointer"
+                          className="cursor-pointer "
                         >
                           <Check className="w-4 h-4" />
                         </Button>
