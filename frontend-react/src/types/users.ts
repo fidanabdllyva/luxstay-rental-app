@@ -11,9 +11,9 @@ export interface User {
   balance: number;
   hostRequest: boolean;
   isBanned: boolean;
-  banDate?: string; 
-  createdAt: string;
-  lastLogin?: string;
+  banDate?: Date | string ; 
+  createdAt:Date | string;
+  lastLogin?: Date | string;
   apartments?: Apartment[];
   wishlist?: Apartment[];
   bookings?: Booking[];     

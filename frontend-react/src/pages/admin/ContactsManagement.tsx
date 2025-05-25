@@ -105,11 +105,11 @@ const AdminApartments = () => {
                     </TableCell>
                     <TableCell className="text-center">
                       {contact.isRead ? (
-                        <span className="inline-block px-3 py-1 text-sm font-semibold text-green-800 bg-green-200 rounded-full">
+                        <span className="inline-block px-3 py-1 text-sm font-semibold text-white bg-black rounded-full">
                           Read
                         </span>
                       ) : (
-                        <span className="inline-block px-3 py-1 text-sm font-semibold text-red-800 bg-red-200 rounded-full">
+                        <span className="inline-block px-3 py-1 text-sm font-semibold  border rounded-full">
                           Unread
                         </span>
                       )}
@@ -123,7 +123,7 @@ const AdminApartments = () => {
 
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button variant="ghost" size="icon">
+                            <Button variant="ghost" size="icon" className="cursor-pointer">
                               <Mail className="w-4 h-4" />
                             </Button>
                           </DialogTrigger>

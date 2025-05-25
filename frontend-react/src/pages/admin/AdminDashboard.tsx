@@ -2,17 +2,21 @@ import { useEffect, useState } from "react"
 import { Avatar, AvatarFallback } from "@/src/components/ui/avatar"
 import { Building, Calendar, DollarSign, Users } from "lucide-react"
 import { getApartments } from "@/api/requests/apartments"
+import { getUsers } from "@/api/requests/users"
 
 const AdminDashboard = () => {
   const [totalApartments, setTotalApartments] = useState(0)
+  const [totalUsers, setTotalUsers] = useState(0)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const apartments = await getApartments()
         setTotalApartments(apartments.length)
+        const users = await getUsers()
+        setTotalUsers(users.length)
       } catch (error) {
-        console.error("Failed to fetch apartments", error)
+        console.error("Failed to fetch data", error)
       }
     }
 
@@ -23,7 +27,7 @@ const AdminDashboard = () => {
     {
       icon: <Users size={20} />,
       title: "Total Users",
-      amount: 0, 
+      amount: totalUsers,
     },
     {
       icon: <Building size={20} />,
@@ -33,12 +37,12 @@ const AdminDashboard = () => {
     {
       icon: <Calendar size={20} />,
       title: "Active Bookings",
-      amount: 0, 
+      amount: 0,
     },
     {
       icon: <DollarSign size={20} />,
       title: "Monthly Revenue",
-      amount: "$0", 
+      amount: "$0",
     },
   ]
 
