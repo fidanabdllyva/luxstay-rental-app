@@ -1,4 +1,3 @@
-// services/userService.ts
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
