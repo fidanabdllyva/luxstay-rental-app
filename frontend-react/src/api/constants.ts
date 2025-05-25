@@ -4,11 +4,13 @@ type endpoints={
   apartments:string
   users:string
   contacts:string
+  bookings:string
 }
 
 export const endpoints: endpoints = {
   slider: "/api/slider",
   apartments: "/api/apartments",
   users:"/api/users",
-  contacts:"/api/contacts"
+  contacts:"/api/contacts",
+  bookings:"/api/bookings"
 };

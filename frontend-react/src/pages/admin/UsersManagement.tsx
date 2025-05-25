@@ -1,5 +1,9 @@
-import { getUsers } from "@/api/requests/users"
-import SkeletonTable from "@/components/admin/TableSkeleton"
+import {
+  getUsers,
+  deleteUser,
+  updateUser,
+} from "@/api/requests/users";
+import SkeletonTable from "@/components/admin/TableSkeleton";
 import {
   Table,
   TableBody,
@@ -7,37 +11,58 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/src/components/ui/table"
-import type { User } from "@/types/users"
-import { Eye, Trash } from "lucide-react"
-import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+} from "@/src/components/ui/table";
+import type { User } from "@/types/users";
+import { Eye, Trash } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const UsersManagement = () => {
-  const [users, setUsers] = useState<User[]>([])
-  const [loading, setLoading] = useState(true)
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const usersData = await getUsers()
-        setUsers(usersData)
+        const usersData = await getUsers();
+        setUsers(usersData);
       } catch (error) {
-        console.error("Failed to fetch users", error)
+        console.error("Failed to fetch users", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this user?")) return;
+    try {
+      await deleteUser(id);
+      setUsers((prev) => prev.filter((user) => user.id !== id));
+    } catch (error) {
+      console.error("Failed to delete user", error);
+    }
+  };
+
+  const handleUpdate = async (id: string, updates: Partial<User>) => {
+    try {
+      const updated = await updateUser(id, updates);
+      setUsers((prev) =>
+        prev.map((user) => (user.id === id ? { ...user, ...updated } : user))
+      );
+    } catch (error) {
+      console.error("Failed to update user", error);
+    }
+  };
 
   const renderHostStatus = (user: User) => {
     if (user.hostRequest) {
-      return user.apartments?.length ? "Yes" : "Requested"
+      return user.apartments?.length ? "Yes" : "Requested";
     }
-    return "No"
-  }
+    return "No";
+  };
 
   return (
     <>
@@ -49,10 +74,10 @@ const UsersManagement = () => {
             rowsCount={10}
             columns={[
               { label: "Username", width: "w-40" },
-              { label: "Email", width: "w-24" },
+              { label: "Email", width: "w-50" },
               { label: "Role", width: "w-32" },
-              { label: "Profile Image", width: "w-32" },
-              { label: "Balance", width: "w-64" },
+              { label: "Profile Image", width: "w-40" },
+              { label: "Balance", width: "w-50" },
               { label: "Host Status", width: "w-48" },
               { label: "Apartments", width: "w-48" },
               { label: "Bookings", width: "w-48" },
@@ -65,7 +90,7 @@ const UsersManagement = () => {
             ]}
           />
         ) : (
-          <Table className="min-w-[1200px] table-fixed">
+          <Table className="min-w-[1100px] table-fixed">
             <TableHeader>
               <TableRow>
                 <TableHead className="w-40">Username</TableHead>
@@ -88,7 +113,7 @@ const UsersManagement = () => {
             <TableBody>
               {users.map((user) => (
                 <TableRow key={user.id}>
-                  <TableCell className="font-medium truncate max-w-[160px] whitespace-nowrap overflow-hidden">
+                  <TableCell className="font-medium truncate max-w-[160px]">
                     {user.username}
                   </TableCell>
                   <TableCell>{user.email}</TableCell>
@@ -100,19 +125,35 @@ const UsersManagement = () => {
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   </TableCell>
-                  <TableCell>${user.balance.toFixed(2)}</TableCell>
+                  <TableCell>
+                    ${user.balance}
+                      
+  
+                  </TableCell>
                   <TableCell>{renderHostStatus(user)}</TableCell>
                   <TableCell>{user.apartments?.length || "Not a host"}</TableCell>
                   <TableCell>{user.bookings?.length || 0}</TableCell>
-                  <TableCell>{user.isBanned ? "Banned" : "Not Banned"}</TableCell>
                   <TableCell>
-                    {user.banDate ? new Date(user.banDate).toLocaleDateString() : "-"}
+                    <input
+                      type="checkbox"
+                      checked={user.isBanned}
+                      onChange={(e) =>
+                        handleUpdate(user.id, { isBanned: e.target.checked })
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    {user.banDate
+                      ? new Date(user.banDate).toLocaleDateString()
+                      : "-"}
                   </TableCell>
                   <TableCell>{user.reviews?.length || 0}</TableCell>
                   <TableCell>
-                    {user.lastLogin ? new Date(user.lastLogin).toLocaleString() : "-"}
+                    {user.lastLogin
+                      ? new Date(user.lastLogin).toLocaleString()
+                      : "-"}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">
                     {user.createdAt
                       ? new Date(user.createdAt).toLocaleDateString()
                       : "-"}
@@ -127,7 +168,10 @@ const UsersManagement = () => {
                       >
                         <Eye size={18} />
                       </Link>
-                      <button className="text-red-500 hover:text-red-700">
+                      <button
+                        onClick={() => handleDelete(user.id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
                         <Trash size={18} />
                       </button>
                     </div>
@@ -139,7 +183,7 @@ const UsersManagement = () => {
         )}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default UsersManagement
+export default UsersManagement;

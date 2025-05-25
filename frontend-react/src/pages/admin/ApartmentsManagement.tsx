@@ -61,15 +61,15 @@ const ApartmentsManagement = () => {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-40">Title</TableHead>
-                <TableHead className="w-24">Type</TableHead>
-                <TableHead className="w-32">Location</TableHead>
-                <TableHead className="w-32">Price/Night</TableHead>
-                <TableHead className="w-64">Description</TableHead>
-                <TableHead className="w-48">Features</TableHead>
-                <TableHead className="w-48">Rules</TableHead>
-                <TableHead className="w-40">Entrepreneur</TableHead>
-                <TableHead className="w-24">Reviews</TableHead>
-                <TableHead className="w-28">Avg Rating</TableHead>
+                <TableHead className="w-24 text-center">Type</TableHead>
+                <TableHead className="w-32 text-center">Location</TableHead>
+                <TableHead className="w-32 text-center">Price/Night</TableHead>
+                <TableHead className="w-64 ">Description</TableHead>
+                <TableHead className="w-48 text-center">Features</TableHead>
+                <TableHead className="w-48 text-center">Rules</TableHead>
+                <TableHead className="w-40 text-center">Entrepreneur</TableHead>
+                <TableHead className="w-24 text-center">Reviews</TableHead>
+                <TableHead className="w-28 text-center">Avg Rating</TableHead>
                 <TableHead className="w-32">Created At</TableHead>
                 <TableHead className="w-28">Actions</TableHead>
               </TableRow>
@@ -81,9 +81,9 @@ const ApartmentsManagement = () => {
                   <TableCell className="font-medium truncate max-w-[160px] whitespace-nowrap overflow-hidden">
                     {apartment.title}
                   </TableCell>
-                  <TableCell>{apartment.type}</TableCell>
-                  <TableCell>{apartment.location}</TableCell>
-                  <TableCell>${apartment.pricePerNight}</TableCell>
+                  <TableCell className="text-center">{apartment.type}</TableCell>
+                  <TableCell className="text-center">{apartment.location}</TableCell>
+                  <TableCell className="text-center">${apartment.pricePerNight}</TableCell>
                   <TableCell className="truncate">{apartment.description}</TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
@@ -109,9 +109,9 @@ const ApartmentsManagement = () => {
                       ))}
                     </div>
                   </TableCell>
-                  <TableCell>{apartment.entrepreneur?.username}</TableCell>
-                  <TableCell>{apartment.reviews?.length ?? 0}</TableCell>
-                  <TableCell>{apartment.avgRating.toFixed(1)}</TableCell>
+                  <TableCell className="text-center">{apartment.entrepreneur?.username}</TableCell>
+                  <TableCell className="text-center">{apartment.reviews?.length ?? 0}</TableCell>
+                  <TableCell className="text-center">{apartment.avgRating.toFixed(1)}</TableCell>
                   <TableCell>{new Date(apartment.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">

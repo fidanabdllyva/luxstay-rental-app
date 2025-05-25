@@ -1,3 +1,6 @@
+import type { Apartment } from "./apartments";
+import type { User } from "./users";
+
 export interface Booking {
   id: string;
   userId: string;
@@ -6,5 +9,8 @@ export interface Booking {
   endDate: Date | string;   
   status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
   totalPrice: number;
-  createdAt: string; // ISO date string
+  createdAt: Date | string; 
+  apartment:Apartment
+  user:User
+  
 }

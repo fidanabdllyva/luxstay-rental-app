@@ -3,6 +3,8 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { registerUser, loginUser } from './authAPI';
 import type { User } from '@/types/authTypes';
 
+const storedUser = localStorage.getItem('user');
+const parsedUser = storedUser ? JSON.parse(storedUser) as User : null;
 
 interface AuthState {
   user: User | null;
@@ -12,10 +14,10 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  user: null,
+  user: parsedUser,
   loading: false,
   error: null,
-  isLoggedIn: false,
+  isLoggedIn: Boolean(parsedUser),
 };
 
 const authSlice = createSlice({
@@ -26,38 +28,43 @@ const authSlice = createSlice({
       state.user = null;
       state.isLoggedIn = false;
       state.error = null;
+      localStorage.removeItem('user');
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(registerUser.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
-    builder.addCase(registerUser.fulfilled, (state, action: PayloadAction<User>) => {
-      state.loading = false;
-      state.user = action.payload;
-      state.isLoggedIn = true;
-      state.error = null;
-    });
-    builder.addCase(registerUser.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload || 'Registration failed';
-    });
+    builder
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state, action: PayloadAction<User>) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.isLoggedIn = true;
+        state.error = null;
+        localStorage.setItem('user', JSON.stringify(action.payload));
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Registration failed';
+      });
 
-    builder.addCase(loginUser.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
-    builder.addCase(loginUser.fulfilled, (state, action: PayloadAction<User>) => {
-      state.loading = false;
-      state.user = action.payload;
-      state.isLoggedIn = true;
-      state.error = null;
-    });
-    builder.addCase(loginUser.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload || 'Login failed';
-    });
+    builder
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action: PayloadAction<User>) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.isLoggedIn = true;
+        state.error = null;
+        localStorage.setItem('user', JSON.stringify(action.payload));
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Login failed';
+      });
   },
 });
 
