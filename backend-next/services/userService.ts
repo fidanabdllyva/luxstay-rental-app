@@ -14,6 +14,9 @@ export async function getUsers() {
       banDate: true,
       createdAt: true,
       lastLogin: true,
+      apartments: true,
+      bookings: true,
+      reviews: true,
     },
     orderBy: {
       createdAt: 'desc',

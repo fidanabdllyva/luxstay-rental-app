@@ -13,7 +13,13 @@ export async function GET(req: Request) {
     isRead: isRead === "true" ? true : isRead === "false" ? false : undefined,
   });
 
-  return NextResponse.json(contacts);
+  return NextResponse.json(
+     {
+      message: 'Contacts fetched successfully',
+      data: contacts,
+    },
+    { status: 200 }
+  );
 }
 
 export async function POST(req: Request) {
