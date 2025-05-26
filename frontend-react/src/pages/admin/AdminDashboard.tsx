@@ -116,16 +116,16 @@ const AdminDashboard = () => {
 
 
       <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white border rounded-2xl p-3">
-          <h3 className="font-bold text-xl">Apartment Types</h3>
-          <p className="text-muted-foreground">Distribution of apartment types</p>
+        <div className="bg-white border rounded-2xl p-5">
+          <h3 className="font-bold text-3xl text-center">Apartment Types</h3>
+          <p className="text-muted-foreground text-center my-2">Distribution of apartment types</p>
           <AptTypesChart />
         </div>
 
-        <div className="bg-white border rounded-2xl p-3">
-          <h3 className="font-bold text-xl">Host Requests</h3>
+        <div className="bg-white border rounded-2xl p-5">
+          <h3 className="font-bold text-2xl">Host Requests</h3>
           <p className="text-muted-foreground">Users requesting to become hosts</p>
-          <BookingsLineChart values={monthlyBookings} />
+          
         </div>
       </div>
     </div>

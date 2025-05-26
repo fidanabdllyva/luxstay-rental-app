@@ -7,7 +7,7 @@ export async function GET() {
 
     return NextResponse.json(
        {
-        message: 'Users fetched successfully',
+        message: 'Bookings fetched successfully',
         data: bookings,
       },
       { status: 200 }

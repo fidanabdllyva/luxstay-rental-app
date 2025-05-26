@@ -12,3 +12,8 @@ export async function getApartmentById(id: string): Promise<Apartment | null> {
   return response.data;
 
 }
+
+export async function deleteApartmentById(id:string):  Promise<{ message: string }>{
+   const response = await instance.delete<{ message: string }>(`${endpoints.apartments}/${id}`);
+  return response.data;
+}

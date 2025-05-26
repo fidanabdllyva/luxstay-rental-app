@@ -6,15 +6,14 @@ export async function getBookings() {
     include: {
       user: {
         select: {
-          id: true,
           username: true,
-          email: true,
           balance: true,
         },
       },
       apartment:{
         select:{
-            pricePerNight:true
+            pricePerNight:true,
+            title:true
         }
       }
     },

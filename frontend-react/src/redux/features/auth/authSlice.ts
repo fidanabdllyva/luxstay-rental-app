@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { registerUser, loginUser } from './authAPI';
-import type { User } from '@/types/authTypes';
+import type { User } from '@/types/users';
 
 const storedUser = localStorage.getItem('user');
 const parsedUser = storedUser ? JSON.parse(storedUser) as User : null;

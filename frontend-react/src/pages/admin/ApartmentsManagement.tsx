@@ -1,4 +1,4 @@
-import { getApartments } from "@/api/requests/apartments"
+import { deleteApartmentById, getApartments } from "@/api/requests/apartments"
 import SkeletonTable from "@/components/admin/TableSkeleton"
 import {
   Table,
@@ -31,6 +31,15 @@ const ApartmentsManagement = () => {
 
     fetchData()
   }, [])
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteApartmentById(id)
+      setApartments((prev) => prev.filter((c) => c.id !== id))
+    } catch (error) {
+      console.error("Failed to delete apartment:", error)
+    }
+  }
 
   return (
     <>
@@ -116,11 +125,14 @@ const ApartmentsManagement = () => {
                   <TableCell>
                     <div className="flex items-center gap-2">
 
-                    <Link replace target="blank" to={`/apartments/${apartment.id}`}>
-                      <Eye size={18}/>
+                      <Link replace target="blank" to={`/apartments/${apartment.id}`}>
+                        <Eye size={18} />
                       </Link>
 
-                      <Trash  size={18}/>
+                      <button onClick={() => handleDelete(apartment.id)}>
+
+                        <Trash size={18} />
+                      </button>
                     </div>
                   </TableCell>
                 </TableRow>

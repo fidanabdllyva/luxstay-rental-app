@@ -33,6 +33,7 @@ import Register from "@/pages/auth/Register";
 
 //not found page
 import NotFound from "@/pages/common/NotFound";
+import ProtectedRoute from "@/components/common/ProtectedRoute";
 
 
 const ROUTER = [
@@ -68,8 +69,9 @@ const ROUTER = [
             },
             {
                 path: "profile",
-                //protected sey
-                element: <ClientProfile />
+                element: <ProtectedRoute allowedRoles={["CLIENT"]}>
+                    <ClientProfile />
+                </ProtectedRoute>
             },
             {
                 path: "login",
@@ -85,10 +87,12 @@ const ROUTER = [
     //admin routes
     {
         path: "/admin",
-        element: <AdminLayout />,
+        element: <ProtectedRoute allowedRoles={["ADMIN"]}>
+            <AdminLayout />
+        </ProtectedRoute>,
         children: [
             {
-                path:"dashboard",
+                path: "dashboard",
                 //protected sey for admin
                 element: <AdminDashboard />
             },
@@ -127,7 +131,9 @@ const ROUTER = [
     //host routes
     {
         path: "host",
-        element: <HostLayout />,
+        element: <ProtectedRoute allowedRoles={["HOST"]}>
+            <HostLayout />
+        </ProtectedRoute>,
         children: [
             {
                 //protected sey for host

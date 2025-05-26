@@ -31,6 +31,7 @@ export async function registerUser({
       username,
       email,
       password: hashedPassword,
+      role: 'CLIENT', 
     },
   });
 
@@ -38,8 +39,16 @@ export async function registerUser({
     id: user.id,
     username: user.username,
     email: user.email,
+    role: user.role,
+    profileImage: user.profileImage,
+    balance: user.balance,
+    hostRequest: user.hostRequest,
+    isBanned: user.isBanned,
+    createdAt: user.createdAt,
+    lastLogin: user.lastLogin,
   };
 }
+
 
 export async function loginUser({
   email,
@@ -63,9 +72,22 @@ export async function loginUser({
     return { error: 'Invalid credentials', status: 401 };
   }
 
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { lastLogin: new Date() },
+  });
+
   return {
     id: user.id,
     username: user.username,
     email: user.email,
+    role: user.role,
+    profileImage: user.profileImage,
+    balance: user.balance,
+    hostRequest: user.hostRequest,
+    isBanned: user.isBanned,
+    createdAt: user.createdAt,
+    lastLogin: user.lastLogin,
   };
 }
+

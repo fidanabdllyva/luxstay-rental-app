@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/src/components/ui/table"
 import type { Booking } from "@/types/bookings"
-import { Eye} from "lucide-react"
+import { Eye } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Link } from "react-router"
 
@@ -78,17 +78,25 @@ const BookingsManagement = () => {
 
                   <TableCell>{new Date(booking.startDate).toLocaleDateString()}</TableCell>
                   <TableCell>{new Date(booking.endDate).toLocaleDateString()}</TableCell>
-                  <TableCell>{booking.status}</TableCell>
+                  <TableCell><span
+                    className={`px-2 py-1 rounded-full text-xs font-semibold
+      ${booking.status === "PENDING" ? "bg-yellow-100 text-yellow-800" : ""}
+      ${booking.status === "CONFIRMED" ? "bg-green-100 text-green-800" : ""}
+      ${booking.status === "CANCELLED" ? "bg-red-100 text-red-800" : ""}
+    `}
+                  >
+                    {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                  </span></TableCell>
                   <TableCell>{booking.totalPrice}</TableCell>
                   <TableCell>{new Date(booking.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
 
-                    
 
-                     <Link target="blank" to={`/apartments/${booking.apartmentId}`}>
-                     <Eye/>
-                     </Link>
+
+                      <Link target="blank" to={`/apartments/${booking.apartmentId}`}>
+                        <Eye />
+                      </Link>
                     </div>
                   </TableCell>
                 </TableRow>
