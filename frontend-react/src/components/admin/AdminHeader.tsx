@@ -3,7 +3,7 @@ import { ModeToggle } from "../common/mode-toggle";
 import { House } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const AdminHeader = () => {
+const HeaderDashboard = () => {
     return (
 
        <header className="flex justify-between w-full items-center z-100 p-4 border border-bottom-1 ">
@@ -20,6 +20,6 @@ const AdminHeader = () => {
     );
 };
 
-export default AdminHeader;
+export default HeaderDashboard;
 
 

@@ -92,8 +92,7 @@ const ROUTER = [
         </ProtectedRoute>,
         children: [
             {
-                path: "dashboard",
-                //protected sey for admin
+                index:true,
                 element: <AdminDashboard />
             },
             {
@@ -136,7 +135,6 @@ const ROUTER = [
         </ProtectedRoute>,
         children: [
             {
-                //protected sey for host
                 index: true,
                 element: <HostDashboard />
             },

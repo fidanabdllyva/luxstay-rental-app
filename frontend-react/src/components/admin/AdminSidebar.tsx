@@ -1,6 +1,13 @@
-import { Building2, Calendar, Images, LayoutDashboard, LogOut, MessageSquare, Users } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar"
-
+import {
+  Building2,
+  Calendar,
+  Images,
+  LayoutDashboard,
+  LogOut,
+  MessageSquare,
+  Users,
+} from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar";
 import {
   Sidebar,
   SidebarContent,
@@ -10,52 +17,44 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/src/components/ui/sidebar"
-import { NavLink } from "react-router"
+} from "@/src/components/ui/sidebar";
+import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/redux/store";
 
-// Menu items.
-const items = [
-  {
-    title: "Dashboard",
-    url: "/admin/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Users",
-    url: "/admin/users",
-    icon: Users,
-  },
-  {
-    title: "Apartments",
-    url: "/admin/apartments",
-    icon: Building2,
-  },
-  {
-    title: "Bookings",
-    url: "/admin/bookings",
-    icon: Calendar,
-  },
-  {
-    title: "Messages",
-    url: "/admin/contacts",
-    icon: MessageSquare,
-  },
-  {
-    title: "Sliders",
-    url: "/admin/sliders",
-    icon: Images,
-  },
-]
+const menuItems = {
+  ADMIN: [
+    { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
+    { title: "Users", url: "/admin/users", icon: Users },
+    { title: "Apartments", url: "/admin/apartments", icon: Building2 },
+    { title: "Bookings", url: "/admin/bookings", icon: Calendar },
+    { title: "Messages", url: "/admin/contacts", icon: MessageSquare },
+    { title: "Sliders", url: "/admin/sliders", icon: Images },
+  ],
+  HOST: [
+    { title: "Dashboard", url: "/host", icon: LayoutDashboard },
+    { title: "My Apartments", url: "/host/apartments", icon: Building2 },
+    { title: "Bookings", url: "/host/bookings", icon: Calendar },
+  ],
+};
 
 export function AppSidebar() {
+  const { user } = useSelector((state: RootState) => state.auth);
+
+  if (!user) return null;
+
+  const items = menuItems[user.role as keyof typeof menuItems] || [];
+
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="py-6">
-            <div className="flex items-center gap-2 ">
+            <div className="flex items-center gap-2">
               <Building2 />
-              <h3 className="text-xl font-bold "> LuxStay Admin</h3>
+              <h3 className="text-xl font-bold">
+                {user.role === "HOST" ? "Host Dashboard" : "LuxStay Admin"}
+              </h3>
             </div>
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -73,25 +72,25 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <div className="absolute bottom-0 border-t-1 w-full">
-          <div className="flex items-center justify-between gap-3 p-4 ">
+
+        {/* Footer */}
+        <div className="absolute bottom-0 border-t w-full">
+          <div className="flex items-center justify-between gap-3 p-4">
             <Avatar className="w-12 h-12">
-              <AvatarImage />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarImage src={user.profileImage || ""} />
+              <AvatarFallback>{user.username[0]?.toUpperCase() ?? "U"}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
-              <h4 className="text-md font-semibold">Admin fidan</h4>
-              <span>fidan@gmail.com</span>
+              <h4 className="text-md font-semibold">{user.username}</h4>
+              <span>{user.email}</span>
             </div>
-            
+
             <div className="hover:bg-accent cursor-pointer p-2 rounded-lg">
-              <LogOut  size={20} />
+              <LogOut size={20} />
             </div>
-
-
           </div>
         </div>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }

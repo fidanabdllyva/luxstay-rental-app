@@ -1,4 +1,4 @@
-import AdminHeader from '@/components/admin/AdminHeader'
+import HeaderDashboard from '@/components/admin/AdminHeader'
 import { AppSidebar } from '@/components/admin/AdminSidebar'
 import { SidebarProvider } from '@/src/components/ui/sidebar'
 import { Outlet } from 'react-router'
@@ -10,7 +10,7 @@ const AdminLayout = () => {
         <AppSidebar />
         <div className="flex-1 flex flex-col overflow-hidden">
           <div className="sticky top-0 z-50">
-            <AdminHeader />
+            <HeaderDashboard />
           </div>
           <main className="flex-1 p-6 overflow-auto bg-muted">
             <Outlet />

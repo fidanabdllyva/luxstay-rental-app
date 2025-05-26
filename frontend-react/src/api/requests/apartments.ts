@@ -17,3 +17,10 @@ export async function deleteApartmentById(id:string):  Promise<{ message: string
    const response = await instance.delete<{ message: string }>(`${endpoints.apartments}/${id}`);
   return response.data;
 }
+
+export async function getHostApartments(entrepreneurId: string): Promise<Apartment[]> {
+  const response = await instance.get<{ message: string; data: Apartment[] }>(
+    `${endpoints.apartments}?entrepreneurId=${entrepreneurId}`
+  );
+  return response.data.data;
+}
