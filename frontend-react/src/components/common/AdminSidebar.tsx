@@ -79,13 +79,13 @@ export function AppSidebar() {
         {/* Footer */}
         <div className="absolute bottom-0 border-t w-full">
           <div className="flex items-center justify-between gap-3 p-4">
-            <Avatar className="w-12 h-12">
+            <Avatar className="w-10 h-10">
               <AvatarImage src={user.profileImage || ""} />
               <AvatarFallback>{user.username[0]?.toUpperCase() ?? "U"}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
               <h4 className="text-md font-semibold">{user.username}</h4>
-              <span>{user.email}</span>
+              <span className="text-sm">{user.email}</span>
             </div>
 
             <button onClick={()=>dispatch(logout())} className="hover:bg-accent cursor-pointer p-2 rounded-lg">

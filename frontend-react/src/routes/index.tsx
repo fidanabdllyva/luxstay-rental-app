@@ -9,7 +9,7 @@ import About from "@/pages/client/About";
 import ApartmentDetails from "@/pages/client/ApartmentDetails";
 import Apartments from "@/pages/client/Apartments";
 import Contact from "@/pages/client/Contact";
-import ClientProfile from "@/pages/client/ClientProfile";
+import ClientProfile from "@/pages/common/Profile";
 
 //admin pages 
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -69,7 +69,7 @@ const ROUTER = [
             },
             {
                 path: "profile",
-                element: <ProtectedRoute allowedRoles={["CLIENT"]}>
+                element: <ProtectedRoute allowedRoles={["CLIENT","HOST","ADMIN"]}>
                     <ClientProfile />
                 </ProtectedRoute>
             },

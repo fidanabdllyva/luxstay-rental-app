@@ -24,3 +24,8 @@ export async function getHostApartments(entrepreneurId: string | undefined): Pro
   );
   return response.data.data;
 }
+
+export async function addApartment(data: Partial<Apartment>): Promise<{ message: string }> {
+  const response = await instance.post(endpoints.apartments, data);
+  return response.data;
+}
