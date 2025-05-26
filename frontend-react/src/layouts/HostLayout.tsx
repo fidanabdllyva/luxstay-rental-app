@@ -1,5 +1,5 @@
 import HeaderDashboard from "@/components/admin/AdminHeader"
-import { AppSidebar } from "@/components/admin/AdminSidebar"
+import { AppSidebar } from "@/components/common/AdminSidebar"
 import { SidebarProvider } from "@/src/components/ui/sidebar"
 import { Outlet } from "react-router"
 

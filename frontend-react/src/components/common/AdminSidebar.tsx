@@ -21,6 +21,8 @@ import {
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
+import { useDispatch } from "react-redux";
+import { logout } from "@/redux/features/auth/authSlice";
 
 const menuItems = {
   ADMIN: [
@@ -39,6 +41,7 @@ const menuItems = {
 };
 
 export function AppSidebar() {
+   const dispatch = useDispatch()
   const { user } = useSelector((state: RootState) => state.auth);
 
   if (!user) return null;
@@ -85,9 +88,9 @@ export function AppSidebar() {
               <span>{user.email}</span>
             </div>
 
-            <div className="hover:bg-accent cursor-pointer p-2 rounded-lg">
+            <button onClick={()=>dispatch(logout())} className="hover:bg-accent cursor-pointer p-2 rounded-lg">
               <LogOut size={20} />
-            </div>
+            </button>
           </div>
         </div>
       </SidebarContent>

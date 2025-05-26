@@ -45,7 +45,7 @@ const ContactForm = () => {
               <Input
                 id="fullName"
                 name="fullName"
-                placeholder="Your name"
+                placeholder="Your Name Surname"
                 value={formik.values.fullName}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}

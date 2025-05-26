@@ -31,7 +31,7 @@ export const contactSchema = Yup.object({
     .max(50, "Full name must be at most 50 characters")
     .matches(
       /^[A-Z][a-z]+(?:\s[A-Z][a-z]+)+$/,
-      "Full name must contain first and last name, starting with capital letters (e.g., John Doe)"
+      "Full name must contain first and last name, starting with capital letters (e.g., Fidan Abdullayeva)"
     ),
 
   email: Yup.string()
