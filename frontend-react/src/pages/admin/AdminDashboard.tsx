@@ -6,6 +6,7 @@ import { getUsers } from "@/api/requests/users"
 import { getBookings } from "@/api/requests/bookings"
 import RevenueChart from "@/components/admin/RevenueChart"
 import BookingsLineChart from "@/components/admin/BookingsLineChart"
+import AptTypesChart from "@/components/admin/AptTypesChart"
 
 const AdminDashboard = () => {
   const [totalApartments, setTotalApartments] = useState(0)
@@ -109,6 +110,21 @@ const AdminDashboard = () => {
         <div className="bg-white border rounded-2xl p-3">
           <h3 className="font-bold text-xl">Bookings Overview</h3>
           <p className="text-muted-foreground">Monthly bookings for the current year</p>
+          <BookingsLineChart values={monthlyBookings} />
+        </div>
+      </div>
+
+
+      <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white border rounded-2xl p-3">
+          <h3 className="font-bold text-xl">Apartment Types</h3>
+          <p className="text-muted-foreground">Distribution of apartment types</p>
+          <AptTypesChart />
+        </div>
+
+        <div className="bg-white border rounded-2xl p-3">
+          <h3 className="font-bold text-xl">Host Requests</h3>
+          <p className="text-muted-foreground">Users requesting to become hosts</p>
           <BookingsLineChart values={monthlyBookings} />
         </div>
       </div>

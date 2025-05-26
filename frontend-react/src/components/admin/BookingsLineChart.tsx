@@ -54,7 +54,7 @@ const BookingsLineChart: React.FC<LineChartProps> = ({ values }) => {
       legend: { display: false },
       title: {
         display: true,
-        text: 'Overview',
+        text: 'Monthly Bookings Overview',
         font: { size: 18 }
       }
     },
