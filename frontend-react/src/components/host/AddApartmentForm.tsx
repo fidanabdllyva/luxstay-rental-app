@@ -66,14 +66,9 @@ export const ruleList: Rule[] = [
 // VALIDATION ------------------------------------------------------------------
 const validationSchema = Yup.object({
   title: Yup.string().min(3).required("Title is required"),
-  type: Yup.mixed<ApartmentType>()
-    .oneOf(apartmentTypes)
-    .required("Type is required"),
+  type: Yup.mixed<ApartmentType>().oneOf(apartmentTypes).required("Type is required"),
   location: Yup.string().min(2).required("Location is required"),
-  pricePerNight: Yup.number()
-    .typeError("Must be a number")
-    .positive("Must be greater than 0")
-    .required("Price per night is required"),
+  pricePerNight: Yup.number().typeError("Must be a number").positive("Must be greater than 0").required("Price per night is required"),
   description: Yup.string().min(10).required("Description is required"),
   features: Yup.array().of(Yup.mixed<Feature>().oneOf(featureList)),
   rules: Yup.array().of(Yup.mixed<Rule>().oneOf(ruleList)),
@@ -87,52 +82,60 @@ interface Props {
 }
 
 const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
-  const entrepreneurId = useSelector(
-    (state: RootState) => state.auth.user?.id
-  );
+  const entrepreneurId = useSelector((state: RootState) => state.auth.user?.id);
 
-  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
+  const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
+  const [galleryImageUrls, setGalleryImageUrls] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   // ------------------ IMAGE UPLOAD ------------------------------------------
-  const handleImageUpload = async (files: FileList | null) => {
+  const uploadImage = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch("http://localhost:3000/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || "Upload failed");
+
+    return data.url;
+  };
+
+  const handleCoverImageUpload = async (file: File | null) => {
+    if (!file) return;
+    try {
+      const url = await uploadImage(file);
+      setCoverImageUrl(url);
+    } catch {
+      setError("Failed to upload cover image.");
+    }
+  };
+
+  const handleGalleryImageUpload = async (files: FileList | null) => {
     if (!files) return;
 
-    const newUrls: string[] = [];
+    const urls: string[] = [];
 
     for (const file of Array.from(files)) {
-      const formData = new FormData();
-      formData.append("file", file);
-
       try {
-        const res = await fetch("http://localhost:3000/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-        const data = await res.json();
-
-        if (!res.ok) throw new Error(data.message || "Upload failed");
-        newUrls.push(data.url);
+        const url = await uploadImage(file);
+        urls.push(url);
       } catch {
-        setError("Failed to upload one or more images.");
+        setError("Failed to upload one or more gallery images.");
         break;
       }
     }
 
-    setUploadedUrls((prev) => [...prev, ...newUrls]);
+    setGalleryImageUrls((prev) => [...prev, ...urls]);
   };
 
   // ------------------ SUBMIT -------------------------------------------------
   const handleSubmit = async (
-    values: Omit<
-      Apartment,
-      | "id"
-      | "images"
-      | "coverImage"
-      | "createdAt"
-      | "updatedAt"
-      | "entrepreneurId"
-    >,
+    values: Partial<Omit<Apartment, "id" | "entrepreneurId" | "coverImage" | "images">>,
     { setSubmitting, resetForm }: any
   ) => {
     setError(null);
@@ -142,28 +145,33 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
       setSubmitting(false);
       return;
     }
-    if (uploadedUrls.length === 0) {
-      setError("Please upload at least one image.");
+
+    if (!coverImageUrl) {
+      setError("Please upload a cover image.");
+      setSubmitting(false);
+      return;
+    }
+
+    if (galleryImageUrls.length === 0) {
+      setError("Please upload at least one gallery image.");
       setSubmitting(false);
       return;
     }
 
     try {
-      const images = uploadedUrls.map(toAbsoluteURL);
-
-      const apartmentData: Apartment = {
+      const apartmentData: Partial<Apartment> = {
         ...values,
-        pricePerNight: Number(values.pricePerNight),
         entrepreneurId,
-        coverImage: images[0],
-        images,
+        pricePerNight: Number(values.pricePerNight),
+        coverImage: toAbsoluteURL(coverImageUrl),
+        images: galleryImageUrls.map(toAbsoluteURL),
       };
 
       await addApartment(apartmentData);
-
       onSuccess();
       resetForm();
-      setUploadedUrls([]);
+      setCoverImageUrl(null);
+      setGalleryImageUrls([]);
     } catch (err: any) {
       setError(err.message || "Something went wrong");
     } finally {
@@ -179,7 +187,7 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
           title: "",
           type: "ISLAND" as ApartmentType,
           location: "",
-          pricePerNight: 1, // <- number, satisfies Yup & Zod defaults
+          pricePerNight: 1,
           description: "",
           features: [] as Feature[],
           rules: [] as Rule[],
@@ -189,15 +197,9 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
       >
         {({ isSubmitting, values }) => (
           <Form className="space-y-4">
-            {/* TITLE ------------------------------------------------------- */}
-            <Field
-              name="title"
-              placeholder="Title"
-              className="w-full p-2 border rounded"
-            />
+            <Field name="title" placeholder="Title" className="w-full p-2 border rounded" />
             <ErrorMessage name="title" component="div" className="text-red-600" />
 
-            {/* TYPE -------------------------------------------------------- */}
             <Field as="select" name="type" className="w-full p-2 border rounded">
               {apartmentTypes.map((type) => (
                 <option key={type} value={type}>
@@ -207,47 +209,21 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
             </Field>
             <ErrorMessage name="type" component="div" className="text-red-600" />
 
-            {/* LOCATION ---------------------------------------------------- */}
-            <Field
-              name="location"
-              placeholder="Location"
-              className="w-full p-2 border rounded"
-            />
+            <Field name="location" placeholder="Location" className="w-full p-2 border rounded" />
             <ErrorMessage name="location" component="div" className="text-red-600" />
 
-            {/* PRICE ------------------------------------------------------- */}
-            <Field
-              name="pricePerNight"
-              type="number"
-              placeholder="Price per night"
-              className="w-full p-2 border rounded"
-            />
-            <ErrorMessage
-              name="pricePerNight"
-              component="div"
-              className="text-red-600"
-            />
+            <Field name="pricePerNight" type="number" placeholder="Price per night" className="w-full p-2 border rounded" />
+            <ErrorMessage name="pricePerNight" component="div" className="text-red-600" />
 
-            {/* DESCRIPTION ------------------------------------------------- */}
-            <Field
-              as="textarea"
-              name="description"
-              placeholder="Description"
-              className="w-full p-2 border rounded"
-            />
-            <ErrorMessage
-              name="description"
-              component="div"
-              className="text-red-600"
-            />
+            <Field as="textarea" name="description" placeholder="Description" className="w-full p-2 border rounded" />
+            <ErrorMessage name="description" component="div" className="text-red-600" />
 
-            {/* FEATURES ---------------------------------------------------- */}
             <div className="space-y-2">
               <p className="font-semibold">Features</p>
               <FieldArray
                 name="features"
                 render={({ push, remove }) => (
-                  <div className="grid grid-cols-2 gap-1 sm:grid-cols-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
                     {featureList.map((f) => {
                       const checked = values.features.includes(f);
                       return (
@@ -256,9 +232,7 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
                             type="checkbox"
                             checked={checked}
                             onChange={() =>
-                              checked
-                                ? remove(values.features.indexOf(f))
-                                : push(f)
+                              checked ? remove(values.features.indexOf(f)) : push(f)
                             }
                           />
                           {f}
@@ -270,13 +244,12 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
               />
             </div>
 
-            {/* RULES ------------------------------------------------------- */}
             <div className="space-y-2">
               <p className="font-semibold">Rules</p>
               <FieldArray
                 name="rules"
                 render={({ push, remove }) => (
-                  <div className="grid grid-cols-2 gap-1 sm:grid-cols-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
                     {ruleList.map((r) => {
                       const checked = values.rules.includes(r);
                       return (
@@ -297,28 +270,48 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
               />
             </div>
 
-            {/* IMAGE UPLOAD ------------------------------------------------ */}
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={(e) => handleImageUpload(e.target.files)}
-              className="block"
-            />
-            {uploadedUrls.length > 0 && (
-              <div className="flex gap-2 flex-wrap mt-2">
-                {uploadedUrls.map((url) => (
-                  <img
-                    key={url}
-                    src={toAbsoluteURL(url)}
-                    alt="Uploaded"
-                    className="w-20 h-20 object-cover rounded"
-                  />
-                ))}
-              </div>
-            )}
+            {/* Cover Image Upload */}
+            <div className="space-y-1">
+              <p className="font-semibold">Cover Image (1 image)</p>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleCoverImageUpload(e.target.files?.[0] || null)}
+                className="block"
+              />
+              {coverImageUrl && (
+                <img
+                  src={toAbsoluteURL(coverImageUrl)}
+                  alt="Cover"
+                  className="w-24 h-24 object-cover mt-2 rounded"
+                />
+              )}
+            </div>
 
-            {/* ACTIONS ----------------------------------------------------- */}
+            {/* Gallery Images Upload */}
+            <div className="space-y-1">
+              <p className="font-semibold">Gallery Images (Multiple)</p>
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={(e) => handleGalleryImageUpload(e.target.files)}
+                className="block"
+              />
+              {galleryImageUrls.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {galleryImageUrls.map((url) => (
+                    <img
+                      key={url}
+                      src={toAbsoluteURL(url)}
+                      alt="Gallery"
+                      className="w-20 h-20 object-cover rounded"
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
             <div className="flex gap-4">
               <button
                 type="submit"
