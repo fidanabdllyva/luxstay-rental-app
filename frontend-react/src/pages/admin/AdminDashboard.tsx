@@ -4,6 +4,8 @@ import { Building, Calendar, DollarSign, Users } from "lucide-react"
 import { getApartments } from "@/api/requests/apartments"
 import { getUsers } from "@/api/requests/users"
 import { getBookings } from "@/api/requests/bookings"
+import RevenueChart from "@/components/admin/RevenueChart"
+import BookingsLineChart from "@/components/admin/BookingsLineChart"
 
 const AdminDashboard = () => {
   const [totalApartments, setTotalApartments] = useState(0)
@@ -11,33 +13,38 @@ const AdminDashboard = () => {
   const [totalBookings, setTotalBookings] = useState(0)
   const [monthlyRevenue, setMonthlyRevenue] = useState(0)
 
+  const [monthlyRevenueData, setMonthlyRevenueData] = useState<number[]>([])
+  const [monthlyBookings, setMonthlyBookings] = useState<number[]>([])
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const apartments = await getApartments()
         const users = await getUsers()
         const bookings = await getBookings()
+
         setTotalApartments(apartments.length)
         setTotalUsers(users.length)
         setTotalBookings(bookings.length)
 
-        const currentMonth = new Date().getMonth()
         const currentYear = new Date().getFullYear()
+        const revenueByMonth = Array(12).fill(0)
+        const bookingsPerMonth = Array(12).fill(0)
 
-        const thisMonthBookings = bookings.filter((booking) => {
-          const bookingDate = new Date(booking.createdAt)
-          return (
-            bookingDate.getMonth() === currentMonth &&
-            bookingDate.getFullYear() === currentYear
-          )
+        bookings.forEach((booking) => {
+          const date = new Date(booking.createdAt)
+          if (date.getFullYear() === currentYear) {
+            const month = date.getMonth()
+            revenueByMonth[month] += booking.totalPrice
+            bookingsPerMonth[month] += 1
+          }
         })
 
-        const totalRevenue = thisMonthBookings.reduce(
-          (sum, booking) => sum + booking.totalPrice,
-          0
-        )
+        setMonthlyRevenueData(revenueByMonth)
+        setMonthlyBookings(bookingsPerMonth)
 
-        setMonthlyRevenue(totalRevenue)
+        const currentMonth = new Date().getMonth()
+        setMonthlyRevenue(revenueByMonth[currentMonth])
       } catch (error) {
         console.error("Failed to fetch data", error)
       }
@@ -92,17 +99,19 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2">
-
-        <div className="bg-red-400">
-          <p>salam</p>
+      <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white border rounded-2xl p-3">
+          <h3 className="font-bold text-xl">Revenue Overview</h3>
+          <p className="text-muted-foreground">Monthly revenue for the current year</p>
+          <RevenueChart monthlyRevenueData={monthlyRevenueData} />
         </div>
 
-        <div>
-          <p className="bg-blue-400">salam</p>
+        <div className="bg-white border rounded-2xl p-3">
+          <h3 className="font-bold text-xl">Bookings Overview</h3>
+          <p className="text-muted-foreground">Monthly bookings for the current year</p>
+          <BookingsLineChart values={monthlyBookings} />
         </div>
       </div>
-
     </div>
   )
 }
