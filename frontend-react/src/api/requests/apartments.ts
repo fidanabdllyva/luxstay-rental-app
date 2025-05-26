@@ -18,7 +18,7 @@ export async function deleteApartmentById(id:string):  Promise<{ message: string
   return response.data;
 }
 
-export async function getHostApartments(entrepreneurId: string): Promise<Apartment[]> {
+export async function getHostApartments(entrepreneurId: string | undefined): Promise<Apartment[]> {
   const response = await instance.get<{ message: string; data: Apartment[] }>(
     `${endpoints.apartments}?entrepreneurId=${entrepreneurId}`
   );

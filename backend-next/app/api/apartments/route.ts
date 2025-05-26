@@ -1,22 +1,32 @@
-import { createApartment, getApartmentById, getApartments } from '@/services/apartmentsService';
+import { createApartment,getApartments } from '@/services/apartmentsService';
 import { ApartmentSchema } from '@/validation/apartment';
+import { ApartmentType } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+
+
 export async function GET(request: NextRequest) {
-try{
+  try {
+    const url = new URL(request.url);
+    const entrepreneurId = url.searchParams.get('entrepreneurId') || undefined;
+    const type = url.searchParams.get('type') as ApartmentType | undefined;
+    const location = url.searchParams.get('location') || undefined;
 
-  const apartments = await getApartments()
-  return NextResponse.json(
-    {
-      message: 'Apartments fetched successfully',
-      data: apartments,
-    },
-    { status: 200 }
-  );
-}
+    const apartments = await getApartments({
+      entrepreneurId,
+      type,
+      location,
+    });
 
-  catch (error) {
+    return NextResponse.json(
+      {
+        message: 'Apartments fetched successfully',
+        data: apartments,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
     return NextResponse.json(
       {
         message: 'Failed to fetch apartments',

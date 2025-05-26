@@ -11,7 +11,6 @@ type Props = {
 const ProtectedRoute = ({ children, allowedRoles }: Props) => {
   const { user } = useSelector((state: RootState) => state.auth);
   const location = useLocation();
-console.log("user:", user); 
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
