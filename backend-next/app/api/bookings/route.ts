@@ -1,12 +1,16 @@
-import { NextResponse } from 'next/server';
-import { getBookings } from '@/services/bookingsService';
+import { NextRequest, NextResponse } from 'next/server';
+import { getBookings, getHostBookings } from '@/services/bookingsService';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const bookings = await getBookings()
+    const entrepreneurId = req.nextUrl.searchParams.get('entrepreneurId') || undefined;
+
+    const bookings = entrepreneurId
+      ? await getHostBookings(entrepreneurId)
+      : await getBookings();
 
     return NextResponse.json(
-       {
+      {
         message: 'Bookings fetched successfully',
         data: bookings,
       },
@@ -20,3 +24,6 @@ export async function GET() {
     );
   }
 }
+
+
+

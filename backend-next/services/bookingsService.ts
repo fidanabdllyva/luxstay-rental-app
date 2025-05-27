@@ -19,3 +19,33 @@ export async function getBookings() {
     },
   });
 }
+
+export async function getHostBookings(entrepreneurId?: string) {
+  const whereClause = entrepreneurId
+    ? {
+        apartment: {
+          entrepreneurId,
+        },
+      }
+    : {};
+
+  return prisma.booking.findMany({
+    where: whereClause,
+    include: {
+      user: {
+        select: {
+          username: true,
+          balance: true,
+        },
+      },
+      apartment: {
+        select: {
+          pricePerNight: true,
+          title: true,
+          entrepreneurId: true,
+        },
+      },
+    },
+  });
+}
+

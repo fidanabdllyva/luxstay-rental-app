@@ -37,7 +37,6 @@ const HostApartments = () => {
 
   const handleFormSuccess = () => {
     setShowAddForm(false);
-    // Refresh the apartment list after successful add
     fetchApartments();
   };
 
