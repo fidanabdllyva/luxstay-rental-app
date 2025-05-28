@@ -39,6 +39,8 @@ export async function getUserById(id: string) {
       banDate: true,
       createdAt: true,
       lastLogin: true,
+      bookings: true,
+      reviews: true
     },
   });
 }

@@ -14,7 +14,7 @@ export async function getUser(id: string): Promise<User> {
   return response.data.data;
 }
 
-export async function updateUser(id: string, updates: Partial<User>): Promise<User> {
+export async function updateUser(id: string | undefined, updates: Partial<User>): Promise<User> {
   const response = await instance.patch<{ message: string; data: User }>(
     `${endpoints.users}/${id}`,
     updates

@@ -12,9 +12,7 @@ import { useSelector } from "react-redux";
 import { differenceInCalendarDays } from "date-fns";
 import type { RootState } from "@/redux/store";
 import { createBooking } from "@/api/requests/bookings";
-import { useDispatch } from "react-redux";
-import { updateUserBalance } from "@/redux/features/auth/authSlice";
-import { updateUser } from "@/api/requests/users";
+
 
 const ApartmentDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,7 +23,6 @@ const ApartmentDetails = () => {
   const [checkOut, setCheckOut] = useState<Date | undefined>(undefined);
 
   const user = useSelector((state: RootState) => state.auth.user);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!id) {
