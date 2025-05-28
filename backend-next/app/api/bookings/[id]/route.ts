@@ -1,16 +1,10 @@
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+
 
 
 type Params = { params: { id: string } };
 
-// Schema validation for booking status
-const bookingStatusSchema = z.object({
-  status: z.enum(["PENDING", "CONFIRMED", "CANCELLED"]),
-});
-
-// GET booking by ID (optional, for consistency)
 export async function GET(_request: NextRequest, { params }: Params) {
   try {
     const booking = await prisma.booking.findUnique({ where: { id: params.id } });

@@ -49,3 +49,15 @@ export async function getHostBookings(entrepreneurId?: string) {
   });
 }
 
+export async function createBooking(data: {
+  userId: string;
+  apartmentId: string;
+  startDate: Date;
+  endDate: Date;
+  totalPrice: number;
+  status?: "PENDING" | "CONFIRMED" | "CANCELLED";
+}) {
+  return prisma.booking.create({
+    data,
+  });
+}

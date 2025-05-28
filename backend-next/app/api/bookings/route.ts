@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBookings, getHostBookings } from '@/services/bookingsService';
+import { createBooking, getBookings, getHostBookings } from '@/services/bookingsService';
 
 export async function GET(req: NextRequest) {
   try {
@@ -23,6 +23,28 @@ export async function GET(req: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+export async function POST(request: NextRequest) {
+    try {
+        const data = await request.json();
+        const newBooking = await createBooking({
+            userId: data.userId,
+            apartmentId: data.apartmentId,
+            startDate: new Date(data.startDate),
+            endDate: new Date(data.endDate),
+            totalPrice: data.totalPrice,
+            status: data.status,
+        });
+        return NextResponse.json(
+          {
+            message:"Booking created successfully",
+            data:newBooking
+          }
+          , { status: 201 });
+    } catch (error) {
+        return NextResponse.json({ error: (error as Error).message }, { status: 400 });
+    }
 }
 
 
