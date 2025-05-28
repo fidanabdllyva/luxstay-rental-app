@@ -30,44 +30,50 @@ const authSlice = createSlice({
       state.error = null;
       localStorage.removeItem('user');
     },
+    updateUserBalance(state, action: PayloadAction<number>) {
+      if (state.user) {
+        state.user.balance = action.payload;
+        localStorage.setItem('user', JSON.stringify(state.user)); 
+      }
+    },
   },
-  extraReducers: (builder) => {
-    builder
-      .addCase(registerUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(registerUser.fulfilled, (state, action: PayloadAction<User>) => {
-        state.loading = false;
-        state.user = action.payload;
-        state.isLoggedIn = true;
-        state.error = null;
-        localStorage.setItem('user', JSON.stringify(action.payload));
-      })
-      .addCase(registerUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || 'Registration failed';
-      });
+    extraReducers: (builder) => {
+      builder
+        .addCase(registerUser.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+        })
+        .addCase(registerUser.fulfilled, (state, action: PayloadAction<User>) => {
+          state.loading = false;
+          state.user = action.payload;
+          state.isLoggedIn = true;
+          state.error = null;
+          localStorage.setItem('user', JSON.stringify(action.payload));
+        })
+        .addCase(registerUser.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload || 'Registration failed';
+        });
 
-    builder
-      .addCase(loginUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(loginUser.fulfilled, (state, action: PayloadAction<User>) => {
-        state.loading = false;
-        state.user = action.payload;
-        state.isLoggedIn = true;
-        state.error = null;
-        localStorage.setItem('user', JSON.stringify(action.payload));
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || 'Login failed';
-      });
-  },
-});
+      builder
+        .addCase(loginUser.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+        })
+        .addCase(loginUser.fulfilled, (state, action: PayloadAction<User>) => {
+          state.loading = false;
+          state.user = action.payload;
+          state.isLoggedIn = true;
+          state.error = null;
+          localStorage.setItem('user', JSON.stringify(action.payload));
+        })
+        .addCase(loginUser.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload || 'Login failed';
+        });
+    },
+  });
 
-export const { logout } = authSlice.actions;
+export const { logout,updateUserBalance } = authSlice.actions;
 
 export default authSlice.reducer;

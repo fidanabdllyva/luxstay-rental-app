@@ -14,6 +14,11 @@ export async function getHostBookings(entrepreneurId: string | undefined): Promi
   return response.data.data;
 }
 
+export async function getBookingById(id: string) {
+  const response = await instance.get(`${endpoints.bookings}/${id}`);
+  return response.data;
+}
+
 export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED';
 
 export async function updateBookingStatus(
@@ -25,4 +30,10 @@ export async function updateBookingStatus(
     updatedFields
   );
   return response.data.data;
+}
+
+
+export async function createBooking(data: Partial<Booking>): Promise<{ message: string }> {
+  const response = await instance.post(endpoints.bookings, data);
+  return response.data;
 }

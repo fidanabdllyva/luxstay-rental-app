@@ -49,7 +49,7 @@ const DetailsTabs = ({ apartment }: DetailsTabsProps) => {
 
                     <h3 className="text-xl font-semibold mt-3">House Rules</h3>
                     {houseRules.map((rule, idx) => (
-                        <div className="flex gap-1">
+                        <div key={idx} className="flex gap-1">
                             <Check className="text-green-500" />
                             <span className={"flex flex-col mb-3"} key={idx}>
                                 {formatEnumLabel(rule)}
@@ -62,7 +62,7 @@ const DetailsTabs = ({ apartment }: DetailsTabsProps) => {
                 <TabsContent value="amenities">
                     <h3 className="text-xl font-semibold mt-3 mb-4">Amenities</h3>
                     {amenities.map((amenity, idx) => (
-                        <div className="flex gap-1">
+                        <div key={idx} className="flex gap-1">
                             <Check className="text-green-500" />
                             <span className={"flex flex-col mb-3"} key={idx}>
                                 {formatEnumLabel(amenity)}
@@ -83,11 +83,11 @@ const DetailsTabs = ({ apartment }: DetailsTabsProps) => {
                     </div>
                     <div>
                         {apartmentReview?.map((review)=>(
-                            <>
+                            <div key={review.id}>
                             <h3>{review.user.username}</h3>
                             <div>{review.comment}</div>
                             
-                            </>
+                            </div>
                         ))}
 
                     </div>
