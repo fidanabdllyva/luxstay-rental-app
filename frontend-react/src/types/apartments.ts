@@ -65,5 +65,5 @@ export interface Apartment {
   reviews?: Review[];
   avgRating: number;
   wishlistedBy?: User[];
-  bookings?: Booking[];
+  bookings?: Booking[] ;
 }

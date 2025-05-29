@@ -24,44 +24,46 @@ const AdminDashboard = () => {
   const [monthlyRevenueData, setMonthlyRevenueData] = useState<number[]>([]);
   const [monthlyBookings, setMonthlyBookings] = useState<number[]>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [apartments, _users, bookings] = await Promise.all([
-          getApartments(),
-          getUsers(),
-          getBookings(),
-        ]);
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const [apartments, _users, bookings] = await Promise.all([
+        getApartments(),
+        getUsers(),
+        getBookings(),
+      ]);
 
-        setTotalApartments(apartments.length);
-        setTotalUsers(_users.length);
-        setTotalBookings(bookings.length);
-        setUsers(_users);
-        setBookings(bookings)
+      const confirmedBookings = bookings.filter(b => b.status === "CONFIRMED");
 
-        const currentYear = new Date().getFullYear();
-        const revenueByMonth = Array(12).fill(0);
-        const bookingsPerMonth = Array(12).fill(0);
+      setTotalApartments(apartments.length);
+      setTotalUsers(_users.length);
+      setTotalBookings(confirmedBookings.length); 
+      setUsers(_users);
+      setBookings(confirmedBookings); 
 
-        bookings.forEach((booking) => {
-          const date = new Date(booking.createdAt);
-          if (date.getFullYear() === currentYear) {
-            const month = date.getMonth();
-            revenueByMonth[month] += booking.totalPrice;
-            bookingsPerMonth[month] += 1;
-          }
-        });
+      const currentYear = new Date().getFullYear();
+      const revenueByMonth = Array(12).fill(0);
+      const bookingsPerMonth = Array(12).fill(0);
 
-        setMonthlyRevenueData(revenueByMonth);
-        setMonthlyBookings(bookingsPerMonth);
-        setMonthlyRevenue(revenueByMonth[new Date().getMonth()]);
-      } catch (error) {
-        console.error("Failed to fetch dashboard data", error);
-      }
-    };
+      confirmedBookings.forEach((booking) => {
+        const date = new Date(booking.createdAt);
+        if (date.getFullYear() === currentYear) {
+          const month = date.getMonth();
+          revenueByMonth[month] += booking.totalPrice;
+          bookingsPerMonth[month] += 1;
+        }
+      });
 
-    fetchData();
-  }, []);
+      setMonthlyRevenueData(revenueByMonth);
+      setMonthlyBookings(bookingsPerMonth);
+      setMonthlyRevenue(revenueByMonth[new Date().getMonth()]);
+    } catch (error) {
+      console.error("Failed to fetch dashboard data", error);
+    }
+  };
+
+  fetchData();
+}, []);
 
   const handleHostRequest = async (userId: string, approve: boolean) => {
     try {

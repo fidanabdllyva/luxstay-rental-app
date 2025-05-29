@@ -112,7 +112,7 @@ const HostBookings = () => {
                       }}
 
                     >
-                      <option value="PENDING" className="bg-white text-black">Pending</option>
+                      <option value="PENDING"    disabled={booking.status !== "PENDING"} className={`bg-white text-black ${booking.status !== "PENDING" ? "text-gray-400 " : ""}`}>Pending</option>
                       <option value="CONFIRMED" className="bg-white text-black">Confirmed</option>
                       <option value="CANCELLED" className="bg-white text-black">Cancelled</option>
                     </select>
