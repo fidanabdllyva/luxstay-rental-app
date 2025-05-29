@@ -26,8 +26,9 @@ export async function PATCH(
 ) {
   try {
     const { status } = await request.json();
+    const validStatuses = ["PENDING", "CONFIRMED", "CANCELLED"];
 
-    if (!["PENDING", "CONFIRMED", "CANCELLED"].includes(status)) {
+    if (!validStatuses.includes(status)) {
       return NextResponse.json({ error: "Invalid status" }, { status: 400 });
     }
 
@@ -40,12 +41,12 @@ export async function PATCH(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    const userBalance = existingBooking.user.balance;
-    const totalPrice = existingBooking.totalPrice;
+    const user = existingBooking.user;
     const previousStatus = existingBooking.status;
+    const totalPrice = existingBooking.totalPrice;
 
-    if (status === "CONFIRMED" && previousStatus !== "CONFIRMED") {
-      if (userBalance < totalPrice) {
+    if (status === "CONFIRMED" && previousStatus === "PENDING") {
+      if (user.balance < totalPrice) {
         return NextResponse.json(
           { error: "User has insufficient balance" },
           { status: 400 }
@@ -53,25 +54,29 @@ export async function PATCH(
       }
 
       await prisma.user.update({
-        where: { id: existingBooking.userId },
-        data: { balance: userBalance - totalPrice },
+        where: { id: user.id },
+        data: {
+          balance: user.balance - totalPrice,
+        },
       });
     }
 
     if (status === "CANCELLED" && previousStatus === "CONFIRMED") {
       await prisma.user.update({
-        where: { id: existingBooking.userId },
-        data: { balance: userBalance + totalPrice },
+        where: { id: user.id },
+        data: {
+          balance: user.balance + totalPrice,
+        },
       });
     }
 
-    const updated = await prisma.booking.update({
+    const updatedBooking = await prisma.booking.update({
       where: { id: params.id },
       data: { status },
     });
 
     return NextResponse.json(
-      { message: "Booking status updated", data: updated },
+      { message: "Booking status updated", data: updatedBooking },
       { status: 200 }
     );
   } catch (error) {
@@ -79,5 +84,6 @@ export async function PATCH(
     return NextResponse.json({ error: "Failed to update status" }, { status: 500 });
   }
 }
+
 
 
