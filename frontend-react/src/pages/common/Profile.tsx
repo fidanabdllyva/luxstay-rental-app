@@ -1,4 +1,5 @@
 import { getUser } from "@/api/requests/users"
+import SkeletonDetailPage from "@/components/client/SkeletonDetailPage"
 import ProfileBookingsWishlist from "@/components/common/ProfileBookingsWishlist"
 import ProfileClientCard from "@/components/common/ProfileClientCard"
 import type { RootState } from "@/redux/store"
@@ -27,7 +28,7 @@ const ClientProfile = () => {
     fetchApartments();
   }, []);
 
-  if (loading) return <> <p>Loading...</p></>
+  if (loading) return <> <SkeletonDetailPage/></>
 
   console.log(user)
   if (!user) return <p>Loading profile...</p>

@@ -1,5 +1,3 @@
-'use client';
-
 import {
   Tabs,
   TabsContent,
@@ -11,6 +9,7 @@ import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import type { User } from "@/types/users";
+import SkeletonDetailPage from "../client/SkeletonDetailPage";
 
 
 type Props = {
@@ -33,7 +32,6 @@ const getStatusColor = (status: string) => {
 export default function ProfileBookingsWishlist({ user }: Props) {
 
   const [loading, setLoading] = useState(true);
-// console.log(user)
 useEffect(()=>
 setLoading(false),[])
 
@@ -50,8 +48,7 @@ setLoading(false),[])
             <h2 className="text-2xl font-semibold mb-4">My Bookings</h2>
 
             {loading ? (
-              <p className="text-muted-foreground">Loading bookings...</p>
-            ) : user.bookings?.length === 0 ? (
+              <SkeletonDetailPage/>) : user.bookings?.length === 0 ? (
               <p className="text-muted-foreground">No bookings found.</p>
             ) : (
               <>
