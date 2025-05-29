@@ -1,19 +1,13 @@
 import { hash } from 'bcryptjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getUserById } from '@/services/userService'
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
     const { id } = params
 
     try {
-        const user = await prisma.user.findUnique({
-            where: { id },
-            include: {
-                apartments: true,
-                bookings: true,
-                reviews: true,
-            },
-        })
+        const user = await getUserById(id)
 
         if (!user) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 })
@@ -25,9 +19,6 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 })
     }
 }
-
-const DEFAULT_PROFILE_IMAGE =
-    'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541'
 
 export async function PATCH(
     req: NextRequest,
@@ -44,7 +35,7 @@ export async function PATCH(
             hostRequest: body.hostRequest,
             isBanned: body.isBanned,
             banDate: body.banDate ? new Date(body.banDate) : null,
-            profileImage: body.profileImage || DEFAULT_PROFILE_IMAGE,
+            profileImage: body.profileImage ,
         }
 
         if (body.password) {

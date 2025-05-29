@@ -5,35 +5,31 @@ import {
   TabsTrigger,
 } from "@/src/components/ui/tabs";
 import { Card, CardContent } from "@/src/components/ui/card";
-import { Badge } from "@/src/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/src/components/ui/table"
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import type { User } from "@/types/users";
 import SkeletonDetailPage from "../client/SkeletonDetailPage";
+import { formatEnumLabel } from "@/utils/helper";
+import { Link } from "react-router";
 
 
 type Props = {
   user: User;
 };
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case "Confirmed":
-      return "bg-green-100 text-green-700";
-    case "Pending":
-      return "bg-yellow-100 text-yellow-700";
-    case "Cancelled":
-      return "bg-red-100 text-red-700";
-    default:
-      return "bg-gray-100 text-gray-700";
-  }
-};
-
 export default function ProfileBookingsWishlist({ user }: Props) {
 
   const [loading, setLoading] = useState(true);
-useEffect(()=>
-setLoading(false),[])
+  useEffect(() =>
+    setLoading(false), [])
 
   return (
     <Tabs defaultValue="bookings" className="w-full">
@@ -45,49 +41,62 @@ setLoading(false),[])
       <TabsContent value="bookings">
         <Card className="mt-4">
           <CardContent className="p-6">
-            <h2 className="text-2xl font-semibold mb-4">My Bookings</h2>
-
             {loading ? (
-              <SkeletonDetailPage/>) : user.bookings?.length === 0 ? (
-              <p className="text-muted-foreground">No bookings found.</p>
-            ) : (
+              <SkeletonDetailPage />) : user.bookings?.length === 0 ? (
+                <p className="text-muted-foreground">No bookings found.</p>
+              ) : (
               <>
-                <div className="grid grid-cols-6 font-medium text-muted-foreground border-b py-2">
-                  <div className="col-span-2">Apartment</div>
-                  <div>Dates</div>
-                  <div>Total</div>
-                  <div>Status</div>
-                  <div>Actions</div>
+                < div >
+                  <h3 className="text-2xl font-semibold mb-2">My Bookings</h3>
+                  <p className="text-sm text-muted-foreground mb-7">View and manage your apartment bookings</p>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Apartment</TableHead>
+                        <TableHead>Dates</TableHead>
+                        <TableHead>Total</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {user.bookings?.map((booking) => (
+                        <TableRow key={booking.id}>
+                          <TableCell className="font-medium">
+                            {booking.apartment?.title} <br />
+                            <span className="text-sm text-muted-foreground">
+                              {booking.apartment?.location}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            {new Date(booking.startDate).toLocaleDateString()} to{" "}
+                            {new Date(booking.endDate).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell>{booking.totalPrice}</TableCell>
+                          <TableCell>
+                            <span
+                              className={`
+                             px-2 py-1 text-sm font-semibold rounded-full
+                             ${booking.status === "CONFIRMED" ? "bg-green-500 text-white" : ""}
+                             ${booking.status === "PENDING" ? "bg-yellow-500 text-white" : ""}
+                             ${booking.status === "CANCELLED" ? "bg-red-500 text-white" : ""}
+                             `}
+                            >
+                              {formatEnumLabel(booking.status)}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <Link to={`/apartments/${booking.apartmentId}`}>
+                              <Button className="cursor-pointer" variant={"outline"}>
+                                View
+                              </Button>
+                            </Link>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
-                {user.bookings?.map((booking) => (
-                  <div
-                    key={booking.id}
-                    className="grid grid-cols-6 items-center border-b py-3"
-                  >
-                    <div className="col-span-2">
-                      <div className="font-medium">
-                        {booking.apartment?.title || "N/A"}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {booking.apartment?.location || "N/A"}
-                      </div>
-                    </div>
-                    <div>
-                      {booking.startDate.toLocaleString()} to {booking.endDate.toLocaleString()}
-                    </div>
-                    <div>${booking.totalPrice}</div>
-                    <div>
-                      <Badge className={`${getStatusColor(booking.status)} px-3 py-1`}>
-                        {booking.status}
-                      </Badge>
-                    </div>
-                    <div>
-                      <Button variant="outline" size="sm">
-                        View
-                      </Button>
-                    </div>
-                  </div>
-                ))}
               </>
             )}
           </CardContent>

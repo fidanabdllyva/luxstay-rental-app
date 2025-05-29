@@ -70,7 +70,7 @@ const HostBookings = () => {
                 <TableHead className="w-64">Apartment Title</TableHead>
                 <TableHead className="w-32">Start Date</TableHead>
                 <TableHead className="w-32">End Date</TableHead>
-                <TableHead className="w-32">Status</TableHead>
+                <TableHead className="w-32 px-7">Status</TableHead>
                 <TableHead className="w-32">Total Price</TableHead>
                 <TableHead className="w-32">Created At</TableHead>
                 <TableHead className="w-28">Actions</TableHead>
@@ -89,17 +89,17 @@ const HostBookings = () => {
                   <TableCell>{new Date(booking.endDate).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <select
+
                       className={`px-2 py-1 rounded-full text-xs font-semibold border
-            ${booking.status === "PENDING" ? "bg-yellow-100 text-yellow-800" : ""}
-            ${booking.status === "CONFIRMED" ? "bg-green-100 text-green-800" : ""}
-            ${booking.status === "CANCELLED" ? "bg-red-100 text-red-800" : ""}
-          `}
+                      ${booking.status === "CONFIRMED" ? "bg-green-500 text-white" : ""}
+                      ${booking.status === "PENDING" ? "bg-yellow-500 text-white" : ""}
+                      ${booking.status === "CANCELLED" ? "bg-red-500 text-white" : ""}
+                                                                                          `}
                       value={booking.status}
                       onChange={async (e) => {
                         const newStatus = e.target.value as "PENDING" | "CONFIRMED" | "CANCELLED";
                         try {
                           await updateBookingStatus(booking.id, { status: newStatus });
-;
                           setBookings((prev) =>
                             prev.map((b) =>
                               b.id === booking.id ? { ...b, status: newStatus } : b
@@ -112,20 +112,17 @@ const HostBookings = () => {
                       }}
 
                     >
-                      <option value="PENDING">Pending</option>
-                      <option value="CONFIRMED">Confirmed</option>
-                      <option value="CANCELLED">Cancelled</option>
+                      <option value="PENDING" className="bg-white text-black">Pending</option>
+                      <option value="CONFIRMED" className="bg-white text-black">Confirmed</option>
+                      <option value="CANCELLED" className="bg-white text-black">Cancelled</option>
                     </select>
                   </TableCell>
-                  <TableCell>{booking.totalPrice}</TableCell>
+                  <TableCell className="px-5">{booking.totalPrice}</TableCell>
                   <TableCell>{new Date(booking.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-2">
-
-
-
+                    <div className="mx-5">
                       <Link target="blank" to={`/apartments/${booking.apartmentId}`}>
-                        <Eye />
+                        <Eye size={20}/>
                       </Link>
                     </div>
                   </TableCell>

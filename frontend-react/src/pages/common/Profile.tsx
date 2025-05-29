@@ -30,7 +30,6 @@ const ClientProfile = () => {
 
   if (loading) return <> <SkeletonDetailPage/></>
 
-  console.log(user)
   if (!user) return <p>Loading profile...</p>
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6 px-4 py-6">
