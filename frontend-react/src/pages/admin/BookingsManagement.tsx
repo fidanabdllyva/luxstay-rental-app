@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/src/components/ui/table"
 import type { Booking } from "@/types/bookings"
+import { formatEnumLabel } from "@/utils/helper"
 import { Eye } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Link } from "react-router"
@@ -78,14 +79,15 @@ const BookingsManagement = () => {
 
                   <TableCell>{new Date(booking.startDate).toLocaleDateString()}</TableCell>
                   <TableCell>{new Date(booking.endDate).toLocaleDateString()}</TableCell>
-                  <TableCell><span
-                    className={`px-2 py-1 rounded-full text-xs font-semibold
-      ${booking.status === "PENDING" ? "bg-yellow-100 text-yellow-800" : ""}
-      ${booking.status === "CONFIRMED" ? "bg-green-100 text-green-800" : ""}
-      ${booking.status === "CANCELLED" ? "bg-red-100 text-red-800" : ""}
-    `}
+                  <TableCell className="mx-auto">    <span
+                    className={`
+                     px-2 py-1 text-sm font-semibold rounded-full
+                     ${booking.status === "CONFIRMED" ? "bg-green-500 text-white" : ""}
+                     ${booking.status === "PENDING" ? "bg-yellow-500 text-white" : ""}
+                     ${booking.status === "CANCELLED" ? "bg-red-500 text-white" : ""}
+                     `}
                   >
-                    {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                    {formatEnumLabel(booking.status)}
                   </span></TableCell>
                   <TableCell>{booking.totalPrice}</TableCell>
                   <TableCell>{new Date(booking.createdAt).toLocaleDateString()}</TableCell>

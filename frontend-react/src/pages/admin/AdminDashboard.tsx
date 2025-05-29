@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Avatar, AvatarFallback } from "@/src/components/ui/avatar";
 import { Building, Calendar, DollarSign, Users } from "lucide-react";
 import { getApartments } from "@/api/requests/apartments";
 import { getUsers, updateUser } from "@/api/requests/users";
@@ -9,6 +8,10 @@ import BookingsLineChart from "@/components/admin/BookingsLineChart";
 import AptTypesChart from "@/components/admin/AptTypesChart";
 import type { User } from "@/types/users";
 import { Button } from "@/components/ui/button";
+import DashboardCard from "@/components/admin/DashboardCards";
+import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar";
+import RecentUsersBookings from "@/components/admin/RecentUsersBookings";
+import type { Booking } from "@/types/bookings";
 
 const AdminDashboard = () => {
   const [totalApartments, setTotalApartments] = useState(0);
@@ -16,6 +19,7 @@ const AdminDashboard = () => {
   const [totalBookings, setTotalBookings] = useState(0);
   const [monthlyRevenue, setMonthlyRevenue] = useState(0);
   const [users, setUsers] = useState<User[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [loadingIds, setLoadingIds] = useState<string[]>([]);
   const [monthlyRevenueData, setMonthlyRevenueData] = useState<number[]>([]);
   const [monthlyBookings, setMonthlyBookings] = useState<number[]>([]);
@@ -33,6 +37,7 @@ const AdminDashboard = () => {
         setTotalUsers(_users.length);
         setTotalBookings(bookings.length);
         setUsers(_users);
+        setBookings(bookings)
 
         const currentYear = new Date().getFullYear();
         const revenueByMonth = Array(12).fill(0);
@@ -108,20 +113,16 @@ const AdminDashboard = () => {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
         {cards.map((card, index) => (
-          <div
+          <DashboardCard
             key={index}
-            className="border rounded-2xl shadow-sm p-6 flex flex-col gap-4 bg-white"
-          >
-            <Avatar className="bg-gray-100 w-10 h-10">
-              <AvatarFallback>{card.icon}</AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="text-sm text-gray-500">{card.title}</p>
-              <span className="text-xl font-bold">{card.amount}</span>
-            </div>
-          </div>
+            icon={card.icon}
+            title={card.title}
+            amount={card.amount}
+          />
         ))}
+
       </div>
 
       {/* Charts */}
@@ -162,12 +163,19 @@ const AdminDashboard = () => {
                 key={user.id}
                 className="flex justify-between items-center border p-3 rounded-lg"
               >
-                <div>
+                <div className="flex items-center gap-2">
+                  <Avatar className="w-10 h-10">
+                    <AvatarImage src={user.profileImage || ""} />
+                    <AvatarFallback>{user.username[0]?.toUpperCase() ?? "U"}</AvatarFallback>
+                  </Avatar>
+                  <div>
                   <p className="font-semibold">{user.username}</p>
                   <p className="text-sm text-gray-500">{user.email}</p>
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Button
+                    className="cursor-pointer"
                     variant="outline"
                     disabled={loadingIds.includes(user.id)}
                     onClick={() => handleHostRequest(user.id, false)}
@@ -175,7 +183,7 @@ const AdminDashboard = () => {
                     {loadingIds.includes(user.id) ? "Processing..." : "Reject"}
                   </Button>
                   <Button
-                    className="bg-green-600 text-white hover:bg-green-700"
+                    className="bg-black text-white hover:bg-neutral-800 cursor-pointer"
                     disabled={loadingIds.includes(user.id)}
                     onClick={() => handleHostRequest(user.id, true)}
                   >
@@ -186,6 +194,10 @@ const AdminDashboard = () => {
             ))
           )}
         </div>
+      </div>
+
+      <div>
+        <RecentUsersBookings users={users} bookings={bookings}/>
       </div>
     </div>
   );
