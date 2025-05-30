@@ -134,4 +134,34 @@ export async function updateApartmentById(
   };
 }
 
+export async function toggleWishlist(apartmentId: string, userId: string) {
+  if (!userId) {
+    throw new Error("userId is required");
+  }
 
+  const apartment = await prisma.apartment.findUnique({
+    where: { id: apartmentId },
+    include: { wishlistedBy: true },
+  });
+
+  if (!apartment) {
+    throw new Error("Apartment not found");
+  }
+
+  const isWishlisted = apartment.wishlistedBy.some(user => user.id === userId);
+
+  const updatedApartment = await prisma.apartment.update({
+    where: { id: apartmentId },
+    data: {
+      wishlistedBy: {
+        [isWishlisted ? "disconnect" : "connect"]: { id: userId },
+      },
+    },
+    include: { wishlistedBy: true },
+  });
+
+  return {
+    message: isWishlisted ? "Removed from wishlist" : "Added to wishlist",
+    wishlistedBy: updatedApartment.wishlistedBy,
+  };
+}
