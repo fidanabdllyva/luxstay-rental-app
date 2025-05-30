@@ -29,3 +29,14 @@ export async function addApartment(data: Partial<Apartment>): Promise<{ message:
   const response = await instance.post(endpoints.apartments, data);
   return response.data;
 }
+
+export async function toggleWishlist(
+  apartmentId: string,
+  userId: string
+): Promise<{ message: string; wishlistedBy: { id: string }[] }> {
+  const response = await instance.patch(`${endpoints.apartments}/${apartmentId}`, {
+    toggleWishlist: true,
+    userId,
+  });
+  return response.data;
+}

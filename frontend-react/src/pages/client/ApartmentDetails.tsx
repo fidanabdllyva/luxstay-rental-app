@@ -62,7 +62,7 @@ const handleBooking = async () => {
       startDate: checkIn,
       endDate: checkOut,
       totalPrice,
-      status: "PENDING", // Booking starts as pending
+      status: "PENDING", 
     });
 
     alert("Booking request sent! Please wait for confirmation.");
