@@ -35,8 +35,8 @@ const HostAptRecentBookings = ({ apartments, bookings }: HostApartmentsBookingsP
 
             <TabsContent value="apartments">
                 <div className="bg-white p-5 border rounded-lg">
-                    <h3 className="text-2xl font-semibold mb-2">Recent Users</h3>
-                    <p className="text-sm text-muted-foreground mb-7">New users who have joined recently</p>
+                    <h3 className="text-2xl font-semibold mb-2">My Apartments</h3>
+                    <p className="text-sm text-muted-foreground mb-7">Manage your listed apartments</p>
                     <Table>
                         <TableHeader>
                             <TableRow>

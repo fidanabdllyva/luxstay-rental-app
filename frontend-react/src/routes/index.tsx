@@ -18,11 +18,9 @@ import SlidersManagement from "@/pages/admin/SlidersManagement";
 import ContactsManagement from "@/pages/admin/ContactsManagement";
 import ApartmentsManagement from "@/pages/admin/ApartmentsManagement";
 import BookingsManagement from "@/pages/admin/BookingsManagement";
-import AdminHostRequest from "@/pages/admin/AdminHostRequest";
-import AdminProfile from "@/pages/admin/AdminProfile";
+
 
 //host pages
-import HostProfile from "@/pages/host/HostProfile";
 import HostBookings from "@/pages/host/HostBookings";
 import HostDashboard from "@/pages/host/HostDashboard";
 import HostApartments from "@/pages/host/HostApartments";
@@ -115,14 +113,6 @@ const ROUTER = [
                 path: "bookings",
                 element: <BookingsManagement />
             },
-            {
-                path: "requests",
-                element: <AdminHostRequest />
-            },
-            {
-                path: "profile",
-                element: <AdminProfile />
-            },
 
         ]
     },
@@ -145,10 +135,6 @@ const ROUTER = [
             {
                 path: "bookings",
                 element: <HostBookings />
-            },
-            {
-                path: "profile",
-                element: <HostProfile />
             },
         ]
     },

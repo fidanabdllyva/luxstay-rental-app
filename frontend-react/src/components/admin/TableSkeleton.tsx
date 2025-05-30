@@ -16,7 +16,7 @@ const SkeletonTable = ({ columns=[], rowsCount = 8 }: SkeletonTableProps) => {
   const rows = Array.from({ length: rowsCount });
 
   return (
-    <Table className="min-w-full table-fixed animate-pulse">
+    <Table className="max-w-full table-fixed animate-pulse">
       <TableHeader>
         <TableRow>
           {columns.map((col, i) => (

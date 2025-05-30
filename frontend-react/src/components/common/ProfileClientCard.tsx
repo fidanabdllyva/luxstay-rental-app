@@ -1,14 +1,13 @@
 import { updateUser } from "@/api/requests/users";
 import { Button } from "@/components/ui/button";
-import type { User } from "@/types/users";
+import { setUser } from "@/redux/features/auth/authSlice";
+import type { RootState } from "@/redux/store";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-type Props = {
-  user: User;
-  setUser: (user: User) => void; 
-};
-
-const ProfileClientCard = ({ user, setUser }: Props) => {
+const ProfileClientCard = () => {
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.auth.user);
   const [hostRequestLoading, setHostRequestLoading] = useState(false);
 
   const handleBecomeHost = async () => {
@@ -17,23 +16,31 @@ const ProfileClientCard = ({ user, setUser }: Props) => {
     setHostRequestLoading(true);
     try {
       const updatedUser = await updateUser(user.id, { hostRequest: true });
-      setUser(updatedUser);
+      dispatch(setUser(updatedUser));
     } catch (error) {
-      alert("Failed to send host request. Please try again.");
       console.error(error);
+      alert("Failed to send host request. Please try again.");
     } finally {
       setHostRequestLoading(false);
     }
   };
 
+  if (!user) return null; 
+
   return (
     <div className="flex flex-col items-center text-center p-2 space-y-8">
-      <div className="w-24 h-24 rounded-full bg-gray-200">
-        <img
-          src={user.profileImage}
-          alt={user.username}
-          className="w-24 h-24 rounded-full"
-        />
+      <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden">
+        {user.profileImage ? (
+          <img
+            src={user.profileImage}
+            alt={user.username}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="flex items-center justify-center w-full h-full text-gray-500">
+            No Image
+          </div>
+        )}
       </div>
 
       <div>
@@ -55,8 +62,7 @@ const ProfileClientCard = ({ user, setUser }: Props) => {
           {new Date(user.createdAt).toLocaleDateString()}
         </p>
         <p>
-          <span className="font-medium">Balance: </span>
-          ${user.balance.toFixed(2)}
+          <span className="font-medium">Balance: </span>${user.balance.toFixed(2)}
         </p>
       </div>
 
