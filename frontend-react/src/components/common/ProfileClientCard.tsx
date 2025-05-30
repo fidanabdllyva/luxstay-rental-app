@@ -48,22 +48,24 @@ const ProfileClientCard = () => {
         <p className="text-gray-500 capitalize">{user.role}</p>
       </div>
 
-      <div className="space-y-1 text-sm w-full text-left">
-        <p>
-          <span className="font-medium">Username: </span>
-          {user.username}
-        </p>
-        <p>
-          <span className="font-medium">Email: </span>
-          {user.email}
-        </p>
-        <p>
-          <span className="font-medium">Member Since: </span>
-          {new Date(user.createdAt).toLocaleDateString()}
-        </p>
-        <p>
-          <span className="font-medium">Balance: </span>${user.balance.toFixed(2)}
-        </p>
+      <div className="space-y-2 text-sm w-full text-left">
+        <div>
+          <span className="font-medium">Username </span>
+          <p className="text-muted-foreground">{user.username}</p>
+        </div>
+        <div>
+          <span className="font-medium">Email </span>
+          <p className="text-muted-foreground">{user.email}</p>
+        </div>
+        <div>
+          <span className="font-medium">Member Since </span>
+          <p className="text-muted-foreground">
+          {new Date(user.createdAt).toLocaleDateString()}</p>
+        </div>
+        <div>
+          <span className="font-medium">Balance </span>
+          <p className="font-bold">${user.balance.toFixed(2)}</p>
+        </div>
       </div>
 
       <div className="w-full space-y-2">
