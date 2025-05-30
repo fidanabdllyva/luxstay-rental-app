@@ -6,6 +6,8 @@ export interface User {
   id: string;
   username: string;
   email: string;
+  password:string
+  currentPassword:string
   role: 'ADMIN' | 'CLIENT' | 'HOST';
   profileImage: string;
   balance: number;

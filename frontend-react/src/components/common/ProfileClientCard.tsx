@@ -13,6 +13,7 @@ import {
   DialogTrigger,
 } from "@/src/components/ui/dialog"
 import EditProfileDialog from "./EditProfileDialog";
+import ChangePasswordDialog from "./ChangePassword";
 
 const ProfileClientCard = () => {
   const dispatch = useDispatch();
@@ -83,21 +84,7 @@ const ProfileClientCard = () => {
 
         {/* change password dialog */}
 
-        <Dialog >
-          <DialogTrigger className="w-full border rounded py-1.5 font-semibold text-sm">Change Password</DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                Change Password
-                <p className="text-muted-foreground text-sm font-light mt-1">Enter your current password and a new password</p>
-              </DialogTitle>
-              <DialogDescription>
-                This action cannot be undone. This will permanently delete your account
-                and remove your data from our servers.
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
+       <ChangePasswordDialog/>
 
         {/* add balance dialog */}
         <Dialog >
