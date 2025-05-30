@@ -1,24 +1,33 @@
-import { updateUser } from "@/api/requests/users";
+import { updateUser, getUser } from "@/api/requests/users";
 import { Button } from "@/components/ui/button";
 import { setUser } from "@/redux/features/auth/authSlice";
 import type { RootState } from "@/redux/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/src/components/ui/dialog"
+
 import EditProfileDialog from "./EditProfileDialog";
 import ChangePasswordDialog from "./ChangePassword";
+import AddBalanceDialog from "./AddBalance";
 
 const ProfileClientCard = () => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
   const [hostRequestLoading, setHostRequestLoading] = useState(false);
+
+  const fetchUser = async () => {
+    if (!user) return;
+    try {
+      const freshUser = await getUser(user.id);
+      dispatch(setUser(freshUser));
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+    } finally {
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   const handleBecomeHost = async () => {
     if (!user || user.hostRequest) return;
@@ -27,6 +36,7 @@ const ProfileClientCard = () => {
     try {
       const updatedUser = await updateUser(user.id, { hostRequest: true });
       dispatch(setUser(updatedUser));
+      fetchUser();
     } catch (error) {
       console.error(error);
       alert("Failed to send host request. Please try again.");
@@ -70,7 +80,8 @@ const ProfileClientCard = () => {
         <div>
           <span className="font-medium">Member Since </span>
           <p className="text-muted-foreground">
-            {new Date(user.createdAt).toLocaleDateString()}</p>
+            {new Date(user.createdAt).toLocaleDateString()}
+          </p>
         </div>
         <div>
           <span className="font-medium">Balance </span>
@@ -83,25 +94,10 @@ const ProfileClientCard = () => {
         <EditProfileDialog />
 
         {/* change password dialog */}
-
-       <ChangePasswordDialog/>
+        <ChangePasswordDialog />
 
         {/* add balance dialog */}
-        <Dialog >
-          <DialogTrigger className="w-full border rounded py-1.5 font-semibold text-sm">Add Balance</DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                Add Balance
-                <p className="text-muted-foreground text-sm font-light mt-1">Add funds to your account balance</p>
-              </DialogTitle>
-              <DialogDescription>
-                This action cannot be undone. This will permanently delete your account
-                and remove your data from our servers.
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
+        <AddBalanceDialog />
 
         {user.role === "CLIENT" && !user.hostRequest && (
           <Button
@@ -118,6 +114,8 @@ const ProfileClientCard = () => {
             Host request already sent.
           </p>
         )}
+
+       
       </div>
     </div>
   );
