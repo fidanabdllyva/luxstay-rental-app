@@ -1,7 +1,7 @@
 import { hash } from 'bcryptjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getUserById } from '@/services/userService'
+import { getUserById, updateUser } from '@/services/userService'
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
     const { id } = params
@@ -19,48 +19,24 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 })
     }
 }
-
 export async function PATCH(
-    req: NextRequest,
-    { params }: { params: { id: string } }
+  req: NextRequest,
+  { params }: { params: { id: string } }
 ) {
-    const { id } = params
-    const body = await req.json()
+  const { id } = params;
+  const body = await req.json();
 
-    try {
-        const updateData: any = {
-            username: body.username,
-            email: body.email,
-            role: body.role,
-            hostRequest: body.hostRequest,
-            isBanned: body.isBanned,
-            banDate: body.banDate ? new Date(body.banDate) : null,
-            profileImage: body.profileImage ,
-        }
+  const result = await updateUser(id, body);
 
-        if (body.password) {
-            const hashedPassword = await hash(body.password, 10)
-            updateData.password = hashedPassword
-        }
+  if ('error' in result) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
+  }
 
-        const updatedUser = await prisma.user.update({
-            where: { id },
-            data: updateData,
-        })
-
-        return NextResponse.json(
-            { message: 'User updated successfully', data: updatedUser },
-            { status: 200 }
-        )
-    } catch (error) {
-        console.error('PATCH /api/users/[id] error:', error)
-        return NextResponse.json(
-            { error: 'Failed to update user' },
-            { status: 500 }
-        )
-    }
+  return NextResponse.json(
+    { message: 'User updated successfully', data: result.data },
+    { status: 200 }
+  );
 }
-
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
     const { id } = params

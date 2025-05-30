@@ -5,6 +5,7 @@ type endpoints={
   users:string
   contacts:string
   bookings:string
+  upload:string
 }
 
 export const endpoints: endpoints = {
@@ -12,5 +13,6 @@ export const endpoints: endpoints = {
   apartments: "/api/apartments",
   users:"/api/users",
   contacts:"/api/contacts",
-  bookings:"/api/bookings"
+  bookings:"/api/bookings",
+  upload:"/api/upload"
 };

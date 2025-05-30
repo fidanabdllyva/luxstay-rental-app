@@ -13,53 +13,24 @@ import type {
 
 import { addApartment } from "@/api/requests/apartments";
 import { toAbsoluteURL } from "@/utils/url";
+import { uploadFile } from "@/api/requests/cloudinaryUpload";
 
 // -----------------------------------------------------------------------------
 // CONSTANTS -------------------------------------------------------------------
 export const apartmentTypes: ApartmentType[] = [
-  "ISLAND",
-  "APARTMENT",
-  "VINTAGE",
-  "VILLA",
-  "PENTHOUSE",
-  "GARDEN",
-  "POOL",
+  "ISLAND", "APARTMENT", "VINTAGE", "VILLA", "PENTHOUSE", "GARDEN", "POOL",
 ];
 
 export const featureList: Feature[] = [
-  "WIFI",
-  "AC",
-  "HEATING",
-  "KITCHEN",
-  "PARKING",
-  "POOL",
-  "PET_FRIENDLY",
-  "WASHER",
-  "DRYER",
-  "GYM",
-  "ELEVATOR",
-  "BALCONY",
-  "HOT_TUB",
-  "BREAKFAST_INCLUDED",
-  "TV",
-  "SMOKE_DETECTOR",
-  "FIRE_EXTINGUISHER",
-  "FURNISHED",
-  "WHEELCHAIR_ACCESSIBLE",
-  "BABY_COT",
+  "WIFI", "AC", "HEATING", "KITCHEN", "PARKING", "POOL", "PET_FRIENDLY", "WASHER", "DRYER",
+  "GYM", "ELEVATOR", "BALCONY", "HOT_TUB", "BREAKFAST_INCLUDED", "TV",
+  "SMOKE_DETECTOR", "FIRE_EXTINGUISHER", "FURNISHED", "WHEELCHAIR_ACCESSIBLE", "BABY_COT",
 ];
 
 export const ruleList: Rule[] = [
-  "NO_SMOKING",
-  "NO_PETS",
-  "NO_PARTIES",
-  "QUIET_HOURS",
-  "CHECK_IN_AFTER_3PM",
-  "CHECK_OUT_BEFORE_11AM",
-  "NO_UNREGISTERED_GUESTS",
-  "CLEAN_UP_AFTER_YOURSELF",
-  "NO_ILLEGAL_ACTIVITIES",
-  "RESPECT_NEIGHBORS",
+  "NO_SMOKING", "NO_PETS", "NO_PARTIES", "QUIET_HOURS", "CHECK_IN_AFTER_3PM",
+  "CHECK_OUT_BEFORE_11AM", "NO_UNREGISTERED_GUESTS", "CLEAN_UP_AFTER_YOURSELF",
+  "NO_ILLEGAL_ACTIVITIES", "RESPECT_NEIGHBORS",
 ];
 
 // -----------------------------------------------------------------------------
@@ -93,16 +64,12 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch("http://localhost:3000/api/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) throw new Error(data.message || "Upload failed");
-
-    return data.url;
+    try {
+      const { url } = await uploadFile(formData);
+      return url;
+    } catch (err: any) {
+      throw new Error(err?.message || "Upload failed");
+    }
   };
 
   const handleCoverImageUpload = async (file: File | null) => {
@@ -117,7 +84,6 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
 
   const handleGalleryImageUpload = async (files: FileList | null) => {
     if (!files) return;
-
     const urls: string[] = [];
 
     for (const file of Array.from(files)) {
@@ -202,9 +168,7 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
 
             <Field as="select" name="type" className="w-full p-2 border rounded">
               {apartmentTypes.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
+                <option key={type} value={type}>{type}</option>
               ))}
             </Field>
             <ErrorMessage name="type" component="div" className="text-red-600" />
@@ -220,54 +184,48 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
 
             <div className="space-y-2">
               <p className="font-semibold">Features</p>
-              <FieldArray
-                name="features"
-                render={({ push, remove }) => (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
-                    {featureList.map((f) => {
-                      const checked = values.features.includes(f);
-                      return (
-                        <label key={f} className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={checked}
-                            onChange={() =>
-                              checked ? remove(values.features.indexOf(f)) : push(f)
-                            }
-                          />
-                          {f}
-                        </label>
-                      );
-                    })}
-                  </div>
-                )}
-              />
+              <FieldArray name="features" render={({ push, remove }) => (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
+                  {featureList.map((f) => {
+                    const checked = values.features.includes(f);
+                    return (
+                      <label key={f} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() =>
+                            checked ? remove(values.features.indexOf(f)) : push(f)
+                          }
+                        />
+                        {f}
+                      </label>
+                    );
+                  })}
+                </div>
+              )} />
             </div>
 
             <div className="space-y-2">
               <p className="font-semibold">Rules</p>
-              <FieldArray
-                name="rules"
-                render={({ push, remove }) => (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
-                    {ruleList.map((r) => {
-                      const checked = values.rules.includes(r);
-                      return (
-                        <label key={r} className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={checked}
-                            onChange={() =>
-                              checked ? remove(values.rules.indexOf(r)) : push(r)
-                            }
-                          />
-                          {r}
-                        </label>
-                      );
-                    })}
-                  </div>
-                )}
-              />
+              <FieldArray name="rules" render={({ push, remove }) => (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
+                  {ruleList.map((r) => {
+                    const checked = values.rules.includes(r);
+                    return (
+                      <label key={r} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() =>
+                            checked ? remove(values.rules.indexOf(r)) : push(r)
+                          }
+                        />
+                        {r}
+                      </label>
+                    );
+                  })}
+                </div>
+              )} />
             </div>
 
             {/* Cover Image Upload */}
@@ -316,9 +274,7 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`px-4 py-2 rounded text-white ${
-                  isSubmitting ? "bg-gray-400" : "bg-green-600"
-                }`}
+                className={`px-4 py-2 rounded text-white ${isSubmitting ? "bg-gray-400" : "bg-green-600"}`}
               >
                 {isSubmitting ? "Adding..." : "Add Apartment"}
               </button>

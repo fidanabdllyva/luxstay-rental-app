@@ -4,6 +4,15 @@ import { setUser } from "@/redux/features/auth/authSlice";
 import type { RootState } from "@/redux/store";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/src/components/ui/dialog"
+import EditProfileDialog from "./EditProfileDialog";
 
 const ProfileClientCard = () => {
   const dispatch = useDispatch();
@@ -25,7 +34,7 @@ const ProfileClientCard = () => {
     }
   };
 
-  if (!user) return null; 
+  if (!user) return null;
 
   return (
     <div className="flex flex-col items-center text-center p-2 space-y-8">
@@ -60,7 +69,7 @@ const ProfileClientCard = () => {
         <div>
           <span className="font-medium">Member Since </span>
           <p className="text-muted-foreground">
-          {new Date(user.createdAt).toLocaleDateString()}</p>
+            {new Date(user.createdAt).toLocaleDateString()}</p>
         </div>
         <div>
           <span className="font-medium">Balance </span>
@@ -69,15 +78,43 @@ const ProfileClientCard = () => {
       </div>
 
       <div className="w-full space-y-2">
-        <Button variant="outline" className="w-full">
-          Edit Profile
-        </Button>
-        <Button variant="outline" className="w-full">
-          Change Password
-        </Button>
-        <Button variant="outline" className="w-full">
-          Add Balance
-        </Button>
+        {/* edit dialog */}
+        <EditProfileDialog />
+
+        {/* change password dialog */}
+
+        <Dialog >
+          <DialogTrigger className="w-full border rounded py-1.5 font-semibold text-sm">Change Password</DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                Change Password
+                <p className="text-muted-foreground text-sm font-light mt-1">Enter your current password and a new password</p>
+              </DialogTitle>
+              <DialogDescription>
+                This action cannot be undone. This will permanently delete your account
+                and remove your data from our servers.
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+
+        {/* add balance dialog */}
+        <Dialog >
+          <DialogTrigger className="w-full border rounded py-1.5 font-semibold text-sm">Add Balance</DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                Add Balance
+                <p className="text-muted-foreground text-sm font-light mt-1">Add funds to your account balance</p>
+              </DialogTitle>
+              <DialogDescription>
+                This action cannot be undone. This will permanently delete your account
+                and remove your data from our servers.
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
 
         {user.role === "CLIENT" && !user.hostRequest && (
           <Button
