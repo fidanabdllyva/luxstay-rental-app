@@ -37,3 +37,10 @@ export async function createBooking(data: Partial<Booking>): Promise<{ message: 
   const response = await instance.post(endpoints.bookings, data);
   return response.data;
 }
+
+export async function getBookingsByApartmentId(apartmentId: string): Promise<Booking[]> {
+  const response = await instance.get<{ message: string; data: Booking[] }>(
+    `${endpoints.bookings}?apartmentId=${apartmentId}`
+  );
+  return response.data.data;
+}

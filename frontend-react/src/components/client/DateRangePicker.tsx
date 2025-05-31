@@ -1,7 +1,6 @@
-// components/client/DateRangePicker.tsx
 import React, { useState } from 'react';
 import { DateRange, type RangeKeyDict, type Range } from 'react-date-range';
-import { addDays, differenceInCalendarDays } from 'date-fns';
+import { addDays, differenceInCalendarDays, isSameDay } from 'date-fns';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import type { Apartment } from '@/types/apartments';
@@ -51,7 +50,16 @@ const DateRangeCalendar: React.FC<Props> = ({ onChange, apartment, disabledDates
           minDate={new Date()}
           rangeColors={['#000']}
           disabledDates={disabledDates}
+          dayContentRenderer={(date) => {
+            const isBooked = disabledDates.some(disabledDate => isSameDay(disabledDate, date));
+            return (
+              <div className={isBooked ? 'bg-red-300 text-white rounded-full w-6 h-6 flex items-center justify-center' : undefined}>
+                {date.getDate()}
+              </div>
+            );
+          }}
         />
+
       </div>
 
       <div className="mt-6 text-sm text-gray-700 space-y-1">
@@ -74,6 +82,10 @@ const DateRangeCalendar: React.FC<Props> = ({ onChange, apartment, disabledDates
           <span>${totalPrice.toFixed(2)}</span>
         </div>
       </div>
+
+      <p className="mt-4 text-red-600 font-medium">
+        * Red dates are already booked and cannot be selected.
+      </p>
     </>
   );
 };

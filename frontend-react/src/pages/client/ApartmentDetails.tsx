@@ -11,8 +11,7 @@ import { useSelector } from "react-redux";
 
 import { differenceInCalendarDays } from "date-fns";
 import type { RootState } from "@/redux/store";
-import { createBooking } from "@/api/requests/bookings";
-
+import { createBooking, getBookingsByApartmentId } from "@/api/requests/bookings";
 
 const ApartmentDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,6 +20,7 @@ const ApartmentDetails = () => {
   const [error, setError] = useState<string | null>(null);
   const [checkIn, setCheckIn] = useState<Date | undefined>(undefined);
   const [checkOut, setCheckOut] = useState<Date | undefined>(undefined);
+  const [bookedDates, setBookedDates] = useState<Date[]>([]);
 
   const user = useSelector((state: RootState) => state.auth.user);
 
@@ -39,40 +39,80 @@ const ApartmentDetails = () => {
       .finally(() => setLoading(false));
   }, [id]);
 
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchBookedDates = async () => {
+      try {
+        const bookings = await getBookingsByApartmentId(id);
+
+        const confirmedBookings = bookings.filter(
+          (b) => b.status === "CONFIRMED"
+        );
+
+        const dates: Date[] = [];
+
+        confirmedBookings.forEach(({ startDate, endDate }) => {
+          let current = new Date(startDate);
+          const last = new Date(endDate);
+
+          while (current <= last) {
+            dates.push(new Date(current));
+            current.setDate(current.getDate() + 1);
+          }
+        });
+
+        setBookedDates(dates);
+      } catch (error) {
+        console.error("Failed to fetch booked dates", error);
+      }
+    };
+
+    fetchBookedDates();
+  }, [id]);
+
   const handleDateChange = (checkIn: Date | undefined, checkOut: Date | undefined) => {
     setCheckIn(checkIn);
     setCheckOut(checkOut);
   };
-  const handleBooking = async () => {
-    if (!user || !checkIn || !checkOut || !apartment) {
-      alert("Missing data");
-      return;
-    }
 
-    const nights = differenceInCalendarDays(checkOut, checkIn);
-    const pricePerNight = apartment.pricePerNight;
-    const cleaningFee = 50;
-    const serviceFee = pricePerNight * 0.1;
-    const totalPrice = nights * pricePerNight + cleaningFee + serviceFee;
+const handleBooking = async () => {
+  if (!user || !checkIn || !checkOut || !apartment) {
+    alert("Missing data");
+    return;
+  }
 
-    try {
-      await createBooking({
-        userId: user.id,
-        apartmentId: apartment.id,
-        startDate: checkIn,
-        endDate: checkOut,
-        totalPrice,
-        status: "PENDING",
-      });
+  const nights = differenceInCalendarDays(checkOut, checkIn);
+  if (nights <= 0) {
+    alert("Invalid date range");
+    return;
+  }
 
-      alert("Booking request sent! Please wait for confirmation.");
-    } catch (err: any) {
-      alert("Error: " + err.message);
-    }
-  };
+  const pricePerNight = apartment.pricePerNight;
+  const cleaningFee = 50;
+  const serviceFee = pricePerNight * 0.1;
+  const totalPrice = nights * pricePerNight + cleaningFee + serviceFee;
 
+  if (user.balance < totalPrice) {
+    alert("Insufficient balance to make this booking. Please add funds.");
+    return; 
+  }
 
+  try {
+    await createBooking({
+      userId: user.id,
+      apartmentId: apartment.id,
+      startDate: checkIn,
+      endDate: checkOut,
+      totalPrice,
+      status: "PENDING",
+    });
 
+    alert("Booking request sent! Please wait for confirmation.");
+  } catch (err: any) {
+    alert("Error: " + err.message);
+  }
+};
 
   if (loading) return <SkeletonDetailPage />;
   if (error) return <div className="text-center py-5 text-lg text-red-500">{error}</div>;
@@ -102,7 +142,7 @@ const ApartmentDetails = () => {
               </div>
             </div>
 
-            <DetailsTabs apartment={apartment} user={user ?? undefined}  />
+            <DetailsTabs apartment={apartment} user={user ?? undefined} />
           </div>
 
           {/* calendar */}
@@ -122,8 +162,11 @@ const ApartmentDetails = () => {
               </div>
             </div>
 
-            <DateRangeCalendar apartment={apartment} onChange={handleDateChange} />
-
+            <DateRangeCalendar
+              apartment={apartment}
+              onChange={handleDateChange}
+              disabledDates={bookedDates}
+            />
 
             <button
               onClick={handleBooking}
