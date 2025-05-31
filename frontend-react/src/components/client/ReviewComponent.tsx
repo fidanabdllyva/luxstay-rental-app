@@ -11,9 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
 import { Input } from "../ui/input";
 import type { User } from "@/types/users";
+import { toast } from "sonner";
 
 type ReviewDialogProps = {
-  onSubmit: (data: { rating: number; comment: string }) => void;
+  onSubmit: (data: { rating: number; comment: string }) => Promise<void> | void;
   user?: User;
 };
 
@@ -25,16 +26,23 @@ const ReviewDialog: React.FC<ReviewDialogProps> = ({ onSubmit, user }) => {
 
   const handleStarClick = (starValue: number) => setRating(starValue);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!comment.trim() || rating === 0) {
-      alert("Please write a review and select a star rating.");
+      toast.error("Please write a review and select a star rating.");
       return;
     }
-    onSubmit({ rating, comment });
-    setRating(0);
-    setHover(0);
-    setComment("");
-    setOpen(false);
+
+    try {
+      await onSubmit({ rating, comment });
+      toast.success("Review submitted successfully!");
+      setRating(0);
+      setHover(0);
+      setComment("");
+      setOpen(false);
+    } catch (error) {
+      toast.error("Failed to submit review");
+      console.error(error);
+    }
   };
 
   return (

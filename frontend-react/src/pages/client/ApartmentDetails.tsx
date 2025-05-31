@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { differenceInCalendarDays } from "date-fns";
 import type { RootState } from "@/redux/store";
 import { createBooking, getBookingsByApartmentId } from "@/api/requests/bookings";
+import { toast } from "sonner";
 
 const ApartmentDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -76,43 +77,43 @@ const ApartmentDetails = () => {
     setCheckOut(checkOut);
   };
 
-const handleBooking = async () => {
-  if (!user || !checkIn || !checkOut || !apartment) {
-    alert("Missing data");
-    return;
-  }
+  const handleBooking = async () => {
+    if (!user || !checkIn || !checkOut || !apartment) {
+      toast.error("Missing data");
+      return;
+    }
 
-  const nights = differenceInCalendarDays(checkOut, checkIn);
-  if (nights <= 0) {
-    alert("Invalid date range");
-    return;
-  }
+    const nights = differenceInCalendarDays(checkOut, checkIn);
+    if (nights <= 0) {
+      toast.error("Invalid date range");
+      return;
+    }
 
-  const pricePerNight = apartment.pricePerNight;
-  const cleaningFee = 50;
-  const serviceFee = pricePerNight * 0.1;
-  const totalPrice = nights * pricePerNight + cleaningFee + serviceFee;
+    const pricePerNight = apartment.pricePerNight;
+    const cleaningFee = 50;
+    const serviceFee = pricePerNight * 0.1;
+    const totalPrice = nights * pricePerNight + cleaningFee + serviceFee;
 
-  if (user.balance < totalPrice) {
-    alert("Insufficient balance to make this booking. Please add funds.");
-    return; 
-  }
+    if (user.balance < totalPrice) {
+      toast.error("Insufficient balance to make this booking. Please add funds.");
+      return; 
+    }
 
-  try {
-    await createBooking({
-      userId: user.id,
-      apartmentId: apartment.id,
-      startDate: checkIn,
-      endDate: checkOut,
-      totalPrice,
-      status: "PENDING",
-    });
+    try {
+      await createBooking({
+        userId: user.id,
+        apartmentId: apartment.id,
+        startDate: checkIn,
+        endDate: checkOut,
+        totalPrice,
+        status: "PENDING",
+      });
 
-    alert("Booking request sent! Please wait for confirmation.");
-  } catch (err: any) {
-    alert("Error: " + err.message);
-  }
-};
+      toast.success("Booking request sent! Please wait for confirmation.");
+    } catch (err: any) {
+      toast.error("Error: " + err.message);
+    }
+  };
 
   if (loading) return <SkeletonDetailPage />;
   if (error) return <div className="text-center py-5 text-lg text-red-500">{error}</div>;

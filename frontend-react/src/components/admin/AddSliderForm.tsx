@@ -3,7 +3,7 @@ import * as Yup from 'yup'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { createSlider } from '@/api/requests/slider'
-// import { toast } from 'sonner'
+import { toast } from 'sonner'
 import { useState } from 'react'
 import { uploadFile } from '@/api/requests/cloudinaryUpload'
 import { Label } from '@/src/components/ui/label'
@@ -35,9 +35,9 @@ const AddSliderForm = ({ onSuccess }: Props) => {
             const res = await uploadFile(formData)
             setFieldValue('imageURL', res.url)
             setPreview(res.url)
-            //   toast.success('Image uploaded')
+              toast.success('Image uploaded')
         } catch {
-            //   toast.error('Upload failed')
+              toast.error('Upload failed')
         }
     }
 
@@ -48,12 +48,12 @@ const AddSliderForm = ({ onSuccess }: Props) => {
             onSubmit={async (values, { resetForm }) => {
                 try {
                     await createSlider(values)
-                    //   toast.success('Slider added successfully')
+                      toast.success('Slider added successfully')
                     resetForm()
                     setPreview('')
                     onSuccess()
                 } catch {
-                    //   toast.error('Failed to add slider')
+                      toast.error('Failed to add slider')
                 }
             }}
         >

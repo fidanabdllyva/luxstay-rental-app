@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { toast } from "sonner";
 
 import type { RootState } from "@/redux/store";
 import type {
@@ -35,7 +36,7 @@ const validationSchema = Yup.object({
   title: Yup.string().min(3).required("Title is required"),
   type: Yup.mixed<ApartmentType>().oneOf(apartmentTypes).required("Type is required"),
   location: Yup.string().min(2).required("Location is required"),
-  pricePerNight: Yup.number().typeError("Must be a number").positive("Must be greater than 0").required("Price is required"),
+  pricePerNight: Yup.number().typeError("Must be a number").positive("Must be greater than 0").required("Price per night is required"),
   description: Yup.string().min(10).required("Description is required"),
   features: Yup.array().of(Yup.mixed<Feature>().oneOf(featureList)),
   rules: Yup.array().of(Yup.mixed<Rule>().oneOf(ruleList)),
@@ -57,8 +58,12 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    const { url } = await uploadFile(formData);
-    return url;
+    try {
+      const { url } = await uploadFile(formData);
+      return url;
+    } catch (err: any) {
+      throw new Error(err?.message || "Upload failed");
+    }
   };
 
   const handleCoverImageUpload = async (file: File | null) => {
@@ -66,8 +71,11 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
     try {
       const url = await uploadImage(file);
       setCoverImageUrl(url);
+      toast.success("Cover image uploaded!");
     } catch {
-      setError("Failed to upload cover image.");
+      const msg = "Failed to upload cover image.";
+      setError(msg);
+      toast.error(msg);
     }
   };
 
@@ -80,12 +88,15 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
         const url = await uploadImage(file);
         urls.push(url);
       } catch {
-        setError("Failed to upload one or more gallery images.");
+        const msg = "Failed to upload one or more gallery images.";
+        setError(msg);
+        toast.error(msg);
         break;
       }
     }
 
     setGalleryImageUrls((prev) => [...prev, ...urls]);
+    if (urls.length > 0) toast.success("Gallery images uploaded!");
   };
 
   const handleSubmit = async (
@@ -95,19 +106,25 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
     setError(null);
 
     if (!entrepreneurId) {
-      setError("Not authenticated");
+      const msg = "Not authenticated";
+      setError(msg);
+      toast.error(msg);
       setSubmitting(false);
       return;
     }
 
     if (!coverImageUrl) {
-      setError("Please upload a cover image.");
+      const msg = "Please upload a cover image.";
+      setError(msg);
+      toast.error(msg);
       setSubmitting(false);
       return;
     }
 
     if (galleryImageUrls.length === 0) {
-      setError("Please upload at least one gallery image.");
+      const msg = "Please upload at least one gallery image.";
+      setError(msg);
+      toast.error(msg);
       setSubmitting(false);
       return;
     }
@@ -122,19 +139,22 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
       };
 
       await addApartment(apartmentData);
+      toast.success("Apartment added successfully!");
       onSuccess();
       resetForm();
       setCoverImageUrl(null);
       setGalleryImageUrls([]);
     } catch (err: any) {
-      setError(err.message || "Something went wrong");
+      const msg = err.message || "Something went wrong";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-xl mx-auto">
       <Formik
         initialValues={{
           title: "",
@@ -169,65 +189,60 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
             <Field as="textarea" name="description" placeholder="Description" className="w-full p-2 border rounded" />
             <ErrorMessage name="description" component="div" className="text-red-600" />
 
-            {/* Features */}
-            <div>
+            <div className="space-y-2">
               <p className="font-semibold">Features</p>
-              <FieldArray name="features">
-                {({ push, remove }) => (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {featureList.map((f) => {
-                      const checked = values.features.includes(f);
-                      return (
-                        <label key={f} className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={checked}
-                            onChange={() =>
-                              checked ? remove(values.features.indexOf(f)) : push(f)
-                            }
-                          />
-                          {f}
-                        </label>
-                      );
-                    })}
-                  </div>
-                )}
-              </FieldArray>
+              <FieldArray name="features" render={({ push, remove }) => (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
+                  {featureList.map((f) => {
+                    const checked = values.features.includes(f);
+                    return (
+                      <label key={f} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() =>
+                            checked ? remove(values.features.indexOf(f)) : push(f)
+                          }
+                        />
+                        {f}
+                      </label>
+                    );
+                  })}
+                </div>
+              )} />
             </div>
 
-            {/* Rules */}
-            <div>
+            <div className="space-y-2">
               <p className="font-semibold">Rules</p>
-              <FieldArray name="rules">
-                {({ push, remove }) => (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {ruleList.map((r) => {
-                      const checked = values.rules.includes(r);
-                      return (
-                        <label key={r} className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={checked}
-                            onChange={() =>
-                              checked ? remove(values.rules.indexOf(r)) : push(r)
-                            }
-                          />
-                          {r}
-                        </label>
-                      );
-                    })}
-                  </div>
-                )}
-              </FieldArray>
+              <FieldArray name="rules" render={({ push, remove }) => (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
+                  {ruleList.map((r) => {
+                    const checked = values.rules.includes(r);
+                    return (
+                      <label key={r} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() =>
+                            checked ? remove(values.rules.indexOf(r)) : push(r)
+                          }
+                        />
+                        {r}
+                      </label>
+                    );
+                  })}
+                </div>
+              )} />
             </div>
 
-            {/* Cover Image */}
-            <div>
-              <p className="font-semibold">Cover Image</p>
+            {/* Cover Image Upload */}
+            <div className="space-y-1">
+              <p className="font-semibold">Cover Image (1 image)</p>
               <input
                 type="file"
                 accept="image/*"
                 onChange={(e) => handleCoverImageUpload(e.target.files?.[0] || null)}
+                className="block"
               />
               {coverImageUrl && (
                 <img
@@ -238,14 +253,15 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
               )}
             </div>
 
-            {/* Gallery Images */}
-            <div>
-              <p className="font-semibold">Gallery Images</p>
+            {/* Gallery Images Upload */}
+            <div className="space-y-1">
+              <p className="font-semibold">Gallery Images (Multiple)</p>
               <input
                 type="file"
-                accept="image/*"
                 multiple
+                accept="image/*"
                 onChange={(e) => handleGalleryImageUpload(e.target.files)}
+                className="block"
               />
               {galleryImageUrls.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
@@ -261,7 +277,6 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
               )}
             </div>
 
-            {/* Buttons */}
             <div className="flex gap-4">
               <button
                 type="submit"
@@ -273,13 +288,13 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
               <button
                 type="button"
                 onClick={onCancel}
-                className="px-4 py-2 rounded border"
+                className="bg-white border text-black px-4 py-2 rounded"
               >
                 Cancel
               </button>
             </div>
 
-            {error && <div className="text-red-600 mt-2">{error}</div>}
+            {error && <p className="text-red-600">{error}</p>}
           </Form>
         )}
       </Formik>

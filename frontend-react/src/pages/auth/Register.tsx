@@ -1,12 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import type { AppDispatch, RootState } from "@/redux/store";
 import { registerSchema } from "@/utils/validation";
 import { registerUser } from "@/redux/features/auth/authAPI";
-
-
+import { toast } from "sonner";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,6 +13,12 @@ const Register = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state: RootState) => state.auth);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   return (
     <div className="min-h-screen flex flex-col justify-center py-10 sm:px-6 lg:px-8">
@@ -32,11 +37,13 @@ const Register = () => {
               confirmPassword: "",
             }}
             validationSchema={registerSchema}
-            onSubmit={async (values) => {
+            onSubmit={async (values, { setSubmitting }) => {
               const { confirmPassword, ...rest } = values;
               const res = await dispatch(registerUser(rest));
+              setSubmitting(false);
               if (res.meta.requestStatus === "fulfilled") {
-                navigate("/"); 
+                toast.success("Registration successful! Welcome!");
+                navigate("/");
               }
             }}
           >
@@ -99,8 +106,6 @@ const Register = () => {
                   </div>
                   <ErrorMessage name="confirmPassword" component="div" className="text-sm text-red-500 mt-1" />
                 </div>
-
-                {error && <div className="text-red-600 text-sm">{error}</div>}
 
                 <button
                   type="submit"

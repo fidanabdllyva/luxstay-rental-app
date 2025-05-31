@@ -10,6 +10,8 @@ import { createReview, deleteReviewById, getReviews } from "@/api/requests/revie
 import type { User } from "@/types/users";
 import ReviewDialog from "./ReviewComponent";
 
+import { toast } from "sonner";
+
 type DetailsTabsProps = {
     apartment: Apartment;
     user?: User;
@@ -33,7 +35,7 @@ const DetailsTabs = ({ apartment, user }: DetailsTabsProps) => {
 
     const handleReviewSubmit = async (data: { rating: number; comment: string }) => {
         if (!user || !apartment) {
-            alert("User or apartment information is missing.");
+            toast.error("User or apartment information is missing.");
             return;
         }
         try {
@@ -45,9 +47,10 @@ const DetailsTabs = ({ apartment, user }: DetailsTabsProps) => {
             });
             const updatedReviews = await getReviews({ apartmentId: apartment.id });
             setReviews(updatedReviews);
+            toast.success("Review submitted successfully!");
         } catch (error) {
             console.error("Failed to submit review", error);
-            alert("Failed to submit review");
+            toast.error("Failed to submit review.");
         }
     };
 
@@ -57,12 +60,12 @@ const DetailsTabs = ({ apartment, user }: DetailsTabsProps) => {
         try {
             await deleteReviewById(reviewId);
             setReviews((prev) => prev.filter((r) => r.id !== reviewId));
+            toast.success("Review deleted successfully.");
         } catch (error) {
             console.error("Failed to delete review", error);
-            alert("Failed to delete review");
+            toast.error("Failed to delete review.");
         }
     };
-
 
     const houseRules = apartment.rules;
     const amenities = apartment.features;
@@ -131,7 +134,6 @@ const DetailsTabs = ({ apartment, user }: DetailsTabsProps) => {
                             {reviews.length} {reviews.length === 1 ? "review" : "reviews"}
                         </span>
 
-                        {/* Pass user here */}
                         <ReviewDialog onSubmit={handleReviewSubmit} user={user} />
                     </div>
 
@@ -172,10 +174,8 @@ const DetailsTabs = ({ apartment, user }: DetailsTabsProps) => {
                                 <p>{review.comment}</p>
                             </div>
                         ))}
-
                     </div>
                 </TabsContent>
-
 
                 {/* Location */}
                 <TabsContent value="location">

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { postContact } from "@/api/requests/contacts"
 import { contactSchema } from "@/utils/validation"
+import { toast } from "sonner"
 
 
 const ContactForm = () => {
@@ -19,10 +20,10 @@ const ContactForm = () => {
     onSubmit: async (values, { resetForm }) => {
       try {
         await postContact(values)
-        // toast.success("Message sent successfully!")
+        toast.success("Message sent successfully!")
         resetForm()
       } catch (error) {
-        // toast.error("Failed to send message.")
+        toast.error("Failed to send message.")
         console.error(error)
       }
     },
