@@ -17,12 +17,26 @@ import { Eye, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import BanDialog from "@/components/admin/BanDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/src/components/ui/alert-dialog";
 
 const UsersManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
+
+  // State to control delete alert dialog
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,13 +53,24 @@ const UsersManagement = () => {
     fetchData();
   }, []);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
+  // Open delete dialog with selected user
+  const openDeleteDialog = (user: User) => {
+    setUserToDelete(user);
+    setIsDeleteDialogOpen(true);
+  };
+
+  // Confirm deletion of user
+  const confirmDelete = async () => {
+    if (!userToDelete) return;
+
     try {
-      await deleteUser(id);
-      setUsers((prev) => prev.filter((user) => user.id !== id));
+      await deleteUser(userToDelete.id);
+      setUsers((prev) => prev.filter((user) => user.id !== userToDelete.id));
     } catch (error) {
       console.error("Failed to delete user", error);
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setUserToDelete(null);
     }
   };
 
@@ -185,9 +210,12 @@ const UsersManagement = () => {
                       >
                         <Eye size={18} />
                       </Link>
+
+                      {/* Delete button triggers AlertDialog */}
                       <button
-                        onClick={() => handleDelete(user.id)}
-                        className=""
+                        onClick={() => openDeleteDialog(user)}
+                        className="text-red-600 hover:text-red-800"
+                        aria-label={`Delete user ${user.username}`}
                       >
                         <Trash size={18} />
                       </button>
@@ -200,6 +228,7 @@ const UsersManagement = () => {
         )}
       </div>
 
+      {/* Ban Dialog */}
       {selectedUser && (
         <BanDialog
           user={selectedUser}
@@ -208,6 +237,25 @@ const UsersManagement = () => {
           onConfirm={handleConfirmBan}
         />
       )}
+
+      {/* Alert Dialog for Delete Confirmation */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete User</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete user{" "}
+              <strong>{userToDelete?.username}</strong>? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

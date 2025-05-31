@@ -20,10 +20,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/src/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/src/components/ui/alert-dialog"
 
 const AdminApartments = () => {
   const [contacts, setContacts] = useState<Contact[]>([])
   const [loading, setLoading] = useState(true)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const readMessage = async (id: string) => {
     try {
@@ -38,12 +50,16 @@ const AdminApartments = () => {
 
   const handleDelete = async (id: string) => {
     try {
+      setDeletingId(id)
       await deleteContact(id)
       setContacts((prev) => prev.filter((c) => c.id !== id))
     } catch (error) {
       console.error("Failed to delete contact:", error)
+    } finally {
+      setDeletingId(null)
     }
   }
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -58,7 +74,6 @@ const AdminApartments = () => {
 
     fetchData()
   }, [])
-
 
   return (
     <>
@@ -117,10 +132,41 @@ const AdminApartments = () => {
                     <TableCell>{new Date(contact.submittedAt).toLocaleDateString()}</TableCell>
                     <TableCell>
                       <div className="flex justify-center items-center gap-2">
-                        <Button onClick={() => handleDelete(contact.id)} className="cursor-pointer" variant="ghost" size="icon">
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        {/* AlertDialog for Delete Confirmation */}
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="cursor-pointer"
+                              disabled={deletingId === contact.id}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </AlertDialogTrigger>
 
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete the message from <strong>{contact.fullName}</strong>.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                className="bg-red-600 hover:bg-red-700"
+                                onClick={() => handleDelete(contact.id)}
+                                disabled={deletingId === contact.id}
+                              >
+                                {deletingId === contact.id ? "Deleting..." : "Delete"}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+
+                        {/* View Message Dialog */}
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button variant="ghost" size="icon" className="cursor-pointer">
@@ -143,35 +189,35 @@ const AdminApartments = () => {
                                 <DialogDescription className="break-words max-w-md">{contact.message}</DialogDescription>
                               </div>
                             </DialogHeader>
-                            {contact.isRead ? <></>
-                            :
-                            <div className=" bottom-4 right-4 left-4">
-                              <Button onClick={() => readMessage(contact.id)} className="max-w-2xl">
-                                <Check className="w-4 h-4 mr-2" />
-                                Mark as Read
-                              </Button>
-                            </div>}
-
+                            {!contact.isRead && (
+                              <div className="bottom-4 right-4 left-4">
+                                <Button onClick={() => readMessage(contact.id)} className="max-w-2xl">
+                                  <Check className="w-4 h-4 mr-2" />
+                                  Mark as Read
+                                </Button>
+                              </div>
+                            )}
                           </DialogContent>
                         </Dialog>
 
-
+                        {/* Quick Mark as Read Button */}
                         <Button
                           onClick={() => readMessage(contact.id)}
                           variant="ghost"
                           size="icon"
-                          className="cursor-pointer "
+                          className="cursor-pointer"
+                          disabled={contact.isRead}
+                          title={contact.isRead ? "Already read" : "Mark as read"}
                         >
                           <Check className="w-4 h-4" />
                         </Button>
-
                       </div>
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                  <TableCell colSpan={7} className="text-center py-8 text-gray-500">
                     No apartments found.
                   </TableCell>
                 </TableRow>
