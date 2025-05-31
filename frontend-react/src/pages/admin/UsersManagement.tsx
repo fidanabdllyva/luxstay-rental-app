@@ -16,10 +16,13 @@ import type { User } from "@/types/users";
 import { Eye, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import BanDialog from "@/components/admin/BanDialog";
 
 const UsersManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,6 +58,21 @@ const UsersManagement = () => {
     } catch (error) {
       console.error("Failed to update user", error);
     }
+  };
+
+  const openBanDialog = (user: User) => {
+    setSelectedUser(user);
+    setIsBanDialogOpen(true);
+  };
+
+  const handleConfirmBan = async (banDate: Date) => {
+    if (!selectedUser) return;
+    await handleUpdate(selectedUser.id, {
+      isBanned: true,
+      banDate: banDate.toISOString(),
+    });
+    setIsBanDialogOpen(false);
+    setSelectedUser(null);
   };
 
   const renderHostStatus = (user: User) => {
@@ -125,22 +143,21 @@ const UsersManagement = () => {
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   </TableCell>
-                  <TableCell>
-                    ${user.balance}
-                      
-  
-                  </TableCell>
+                  <TableCell>${user.balance}</TableCell>
                   <TableCell>{renderHostStatus(user)}</TableCell>
                   <TableCell>{user.apartments?.length || "Not a host"}</TableCell>
                   <TableCell>{user.bookings?.length || 0}</TableCell>
                   <TableCell>
-                    <input
-                      type="checkbox"
-                      checked={user.isBanned}
-                      onChange={(e) =>
-                        handleUpdate(user.id, { isBanned: e.target.checked })
-                      }
-                    />
+                    {user.isBanned ? (
+                      <span className="text-red-500 font-semibold">Banned</span>
+                    ) : (
+                      <button
+                        onClick={() => openBanDialog(user)}
+                        className="text-yellow-600 hover:underline text-sm"
+                      >
+                        Ban
+                      </button>
+                    )}
                   </TableCell>
                   <TableCell>
                     {user.banDate
@@ -164,13 +181,13 @@ const UsersManagement = () => {
                         replace
                         target="_blank"
                         to={`/users/${user.id}`}
-                        className="text-blue-500 hover:underline"
+                        className=" hover:underline"
                       >
                         <Eye size={18} />
                       </Link>
                       <button
                         onClick={() => handleDelete(user.id)}
-                        className="text-red-500 hover:text-red-700"
+                        className=""
                       >
                         <Trash size={18} />
                       </button>
@@ -182,6 +199,15 @@ const UsersManagement = () => {
           </Table>
         )}
       </div>
+
+      {selectedUser && (
+        <BanDialog
+          user={selectedUser}
+          open={isBanDialogOpen}
+          setOpen={setIsBanDialogOpen}
+          onConfirm={handleConfirmBan}
+        />
+      )}
     </>
   );
 };

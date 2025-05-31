@@ -12,11 +12,14 @@ import type { Booking } from "@/types/bookings"
 import { formatEnumLabel } from "@/utils/helper"
 import { Eye } from "lucide-react"
 import { useEffect, useState } from "react"
-import { Link } from "react-router"
+import { Link } from "react-router-dom"
+import { Input } from "@/components/ui/input"
 
 const BookingsManagement = () => {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDING' | 'CONFIRMED' | 'CANCELLED'>('ALL')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,13 +37,42 @@ const BookingsManagement = () => {
     fetchData()
   }, [])
 
+  const filteredBookings = bookings.filter((booking) => {
+    const matchesSearch =
+      booking.user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      booking.apartment.title.toLowerCase().includes(searchTerm.toLowerCase())
+
+    const matchesStatus =
+      statusFilter === 'ALL' || booking.status === statusFilter
+
+    return matchesSearch && matchesStatus
+  })
+
   return (
     <>
       <h2 className="text-2xl font-bold mb-4">Bookings Management</h2>
 
+      <div className="flex items-center gap-4 mb-4">
+        <Input
+          placeholder="Search by username or apartment title..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-[300px]"
+        />
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as any)}
+          className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+        >
+          <option value="ALL">All Statuses</option>
+          <option value="PENDING">Pending</option>
+          <option value="CONFIRMED">Confirmed</option>
+          <option value="CANCELLED">Cancelled</option>
+        </select>
+      </div>
+
       <div className="overflow-x-auto">
         {loading ? (
-
           <SkeletonTable
             rowsCount={10}
             columns={[
@@ -70,32 +102,28 @@ const BookingsManagement = () => {
             </TableHeader>
 
             <TableBody>
-              {bookings.map((booking) => (
+              {filteredBookings.map((booking) => (
                 <TableRow key={booking.id}>
                   <TableCell>{booking.user.username}</TableCell>
                   <TableCell className="font-medium truncate max-w-[160px] whitespace-nowrap overflow-hidden">
                     {booking.apartment.title}
                   </TableCell>
-
                   <TableCell>{new Date(booking.startDate).toLocaleDateString()}</TableCell>
                   <TableCell>{new Date(booking.endDate).toLocaleDateString()}</TableCell>
-                  <TableCell className="mx-auto">    <span
-                    className={`
-                     px-2 py-1 text-sm font-semibold rounded-full
-                     ${booking.status === "CONFIRMED" ? "bg-green-500 text-white" : ""}
-                     ${booking.status === "PENDING" ? "bg-yellow-500 text-white" : ""}
-                     ${booking.status === "CANCELLED" ? "bg-red-500 text-white" : ""}
-                     `}
-                  >
-                    {formatEnumLabel(booking.status)}
-                  </span></TableCell>
+                  <TableCell>
+                    <span
+                      className={`px-2 py-1 text-sm font-semibold rounded-full
+                        ${booking.status === "CONFIRMED" ? "bg-green-500 text-white" : ""}
+                        ${booking.status === "PENDING" ? "bg-yellow-500 text-white" : ""}
+                        ${booking.status === "CANCELLED" ? "bg-red-500 text-white" : ""}`}
+                    >
+                      {formatEnumLabel(booking.status)}
+                    </span>
+                  </TableCell>
                   <TableCell>{booking.totalPrice}</TableCell>
                   <TableCell>{new Date(booking.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-
-
-
                       <Link target="blank" to={`/apartments/${booking.apartmentId}`}>
                         <Eye />
                       </Link>

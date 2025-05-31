@@ -1,7 +1,7 @@
-import { getHostBookings, updateBookingStatus } from "@/api/requests/bookings"
-import SkeletonTable from "@/components/admin/TableSkeleton"
-import type { RootState } from "@/redux/store"
-import { Input } from "@/src/components/ui/input"
+import { getHostBookings, updateBookingStatus } from "@/api/requests/bookings";
+import SkeletonTable from "@/components/admin/TableSkeleton";
+import type { RootState } from "@/redux/store";
+import { Input } from "@/src/components/ui/input";
 import {
   Table,
   TableBody,
@@ -9,18 +9,20 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/src/components/ui/table"
-import type { Booking } from "@/types/bookings"
-import { Eye } from "lucide-react"
-import { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
-import { Link } from "react-router"
+} from "@/src/components/ui/table";
+import type { Booking } from "@/types/bookings";
+import { Eye } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const HostBookings = () => {
-  const [bookings, setBookings] = useState<Booking[]>([])
-  const [loading, setLoading] = useState(true)
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDING' | 'CONFIRMED' | 'CANCELLED'>('ALL');
+
   const entrepreneurId = useSelector(
     (state: RootState) => state.auth.user?.id
   );
@@ -42,23 +44,45 @@ const HostBookings = () => {
   useEffect(() => {
     fetchBookings();
   }, [entrepreneurId]);
-  const filteredBookings = bookings.filter(
-    (booking) =>
+
+  const filteredBookings = bookings.filter((booking) => {
+    const matchesSearch =
       booking.user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.apartment.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      booking.apartment.title.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === 'ALL' || booking.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
+
   if (error) return <p>Error: {error}</p>;
+
   return (
     <>
       <h2 className="text-2xl font-bold mb-4">Bookings Management</h2>
-      <Input
-        placeholder="Search by username or apartment title..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="mb-4"
-      />      <div className="overflow-x-auto">
-        {loading ? (
 
+      <div className="flex items-center gap-4 mb-4">
+        <Input
+          placeholder="Search by username or apartment title..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-[300px]"
+        />
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as any)}
+          className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+        >
+          <option value="ALL">All Statuses</option>
+          <option value="PENDING">Pending</option>
+          <option value="CONFIRMED">Confirmed</option>
+          <option value="CANCELLED">Cancelled</option>
+        </select>
+      </div>
+
+      <div className="overflow-x-auto">
+        {loading ? (
           <SkeletonTable
             rowsCount={10}
             columns={[
@@ -99,12 +123,11 @@ const HostBookings = () => {
                   <TableCell>{new Date(booking.endDate).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <select
-
                       className={`px-2 py-1 rounded-full text-xs font-semibold border
-                      ${booking.status === "CONFIRMED" ? "bg-green-500 text-white" : ""}
-                      ${booking.status === "PENDING" ? "bg-yellow-500 text-white" : ""}
-                      ${booking.status === "CANCELLED" ? "bg-red-500 text-white" : ""}
-                                                                                          `}
+                        ${booking.status === "CONFIRMED" ? "bg-green-500 text-white" : ""}
+                        ${booking.status === "PENDING" ? "bg-yellow-500 text-white" : ""}
+                        ${booking.status === "CANCELLED" ? "bg-red-500 text-white" : ""}
+                      `}
                       value={booking.status}
                       onChange={async (e) => {
                         const newStatus = e.target.value as "PENDING" | "CONFIRMED" | "CANCELLED";
@@ -120,11 +143,20 @@ const HostBookings = () => {
                           alert("Status update failed");
                         }
                       }}
-
                     >
-                      <option value="PENDING" disabled={booking.status !== "PENDING"} className={`bg-white text-black ${booking.status !== "PENDING" ? "text-gray-400 " : ""}`}>Pending</option>
-                      <option value="CONFIRMED" className="bg-white text-black">Confirmed</option>
-                      <option value="CANCELLED" className="bg-white text-black">Cancelled</option>
+                      <option
+                        value="PENDING"
+                        disabled={booking.status !== "PENDING"}
+                        className={`bg-white text-black ${booking.status !== "PENDING" ? "text-gray-400 " : ""}`}
+                      >
+                        Pending
+                      </option>
+                      <option value="CONFIRMED" className="bg-white text-black">
+                        Confirmed
+                      </option>
+                      <option value="CANCELLED" className="bg-white text-black">
+                        Cancelled
+                      </option>
                     </select>
                   </TableCell>
                   <TableCell className="px-5">{booking.totalPrice}</TableCell>
@@ -143,7 +175,7 @@ const HostBookings = () => {
         )}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default HostBookings
+export default HostBookings;
