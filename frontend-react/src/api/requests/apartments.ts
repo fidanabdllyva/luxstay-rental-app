@@ -40,3 +40,12 @@ export async function toggleWishlist(
   });
   return response.data;
 }
+
+
+export async function updateApartment(
+  id: string,
+  data: Partial<Omit<Apartment, "id">>
+): Promise<{ message: string }> {
+  const response = await instance.put(`${endpoints.apartments}/${id}`, data);
+  return response.data;
+}

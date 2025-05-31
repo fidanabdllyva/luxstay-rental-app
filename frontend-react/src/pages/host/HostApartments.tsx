@@ -12,10 +12,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/src/components/ui/table";
-import { Link } from "react-router-dom"; // Fixed import here
-import { Eye, Trash } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Eye, Trash, SquarePen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AddApartmentForm from "@/components/host/AddApartmentForm";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+} from "@/src/components/ui/dialog";
+import EditApartmentForm from "@/components/host/EditApartmentForm";
 
 const HostApartments = () => {
   const [apartments, setApartments] = useState<Apartment[]>([]);
@@ -26,6 +34,8 @@ const HostApartments = () => {
   );
 
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editApartment, setEditApartment] = useState<Apartment | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const handleAddClick = () => {
     setShowAddForm(true);
@@ -175,6 +185,40 @@ const HostApartments = () => {
                         >
                           <Eye size={18} />
                         </Link>
+
+                        <Dialog
+                          open={editDialogOpen && editApartment?.id === apartment.id}
+                          onOpenChange={setEditDialogOpen}
+                        >
+                          <DialogTrigger asChild>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => {
+                                setEditApartment(apartment);
+                                setEditDialogOpen(true);
+                              }}
+                            >
+                              <SquarePen size={18} />
+                            </Button>
+                          </DialogTrigger>
+
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Edit Apartment</DialogTitle>
+                            </DialogHeader>
+                            {editApartment && (
+                              <EditApartmentForm
+                                apartment={editApartment}
+                                onSuccess={() => {
+                                  fetchApartments();
+                                  setEditDialogOpen(false);
+                                }}
+                                onCancel={() => setEditDialogOpen(false)}
+                              />
+                            )}
+                          </DialogContent>
+                        </Dialog>
 
                         <button onClick={() => handleDelete(apartment.id)}>
                           <Trash size={18} />

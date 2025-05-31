@@ -1,6 +1,3 @@
-import type { Apartment } from "./apartments";
-import type { User } from "./users";
-
 export interface Review {
   id: string;
   userId: string;

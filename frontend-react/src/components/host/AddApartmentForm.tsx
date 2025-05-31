@@ -15,8 +15,6 @@ import { addApartment } from "@/api/requests/apartments";
 import { toAbsoluteURL } from "@/utils/url";
 import { uploadFile } from "@/api/requests/cloudinaryUpload";
 
-// -----------------------------------------------------------------------------
-// CONSTANTS -------------------------------------------------------------------
 export const apartmentTypes: ApartmentType[] = [
   "ISLAND", "APARTMENT", "VINTAGE", "VILLA", "PENTHOUSE", "GARDEN", "POOL",
 ];
@@ -33,20 +31,16 @@ export const ruleList: Rule[] = [
   "NO_ILLEGAL_ACTIVITIES", "RESPECT_NEIGHBORS",
 ];
 
-// -----------------------------------------------------------------------------
-// VALIDATION ------------------------------------------------------------------
 const validationSchema = Yup.object({
   title: Yup.string().min(3).required("Title is required"),
   type: Yup.mixed<ApartmentType>().oneOf(apartmentTypes).required("Type is required"),
   location: Yup.string().min(2).required("Location is required"),
-  pricePerNight: Yup.number().typeError("Must be a number").positive("Must be greater than 0").required("Price per night is required"),
+  pricePerNight: Yup.number().typeError("Must be a number").positive("Must be greater than 0").required("Price is required"),
   description: Yup.string().min(10).required("Description is required"),
   features: Yup.array().of(Yup.mixed<Feature>().oneOf(featureList)),
   rules: Yup.array().of(Yup.mixed<Rule>().oneOf(ruleList)),
 });
 
-// -----------------------------------------------------------------------------
-// COMPONENT -------------------------------------------------------------------
 interface Props {
   onCancel: () => void;
   onSuccess: () => void;
@@ -59,17 +53,12 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
   const [galleryImageUrls, setGalleryImageUrls] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // ------------------ IMAGE UPLOAD ------------------------------------------
   const uploadImage = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append("file", file);
 
-    try {
-      const { url } = await uploadFile(formData);
-      return url;
-    } catch (err: any) {
-      throw new Error(err?.message || "Upload failed");
-    }
+    const { url } = await uploadFile(formData);
+    return url;
   };
 
   const handleCoverImageUpload = async (file: File | null) => {
@@ -99,7 +88,6 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
     setGalleryImageUrls((prev) => [...prev, ...urls]);
   };
 
-  // ------------------ SUBMIT -------------------------------------------------
   const handleSubmit = async (
     values: Partial<Omit<Apartment, "id" | "entrepreneurId" | "coverImage" | "images">>,
     { setSubmitting, resetForm }: any
@@ -145,9 +133,8 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
     }
   };
 
-  // ------------------ RENDER -------------------------------------------------
   return (
-    <div className="max-w-xl mx-auto">
+    <div className="max-w-3xl mx-auto">
       <Formik
         initialValues={{
           title: "",
@@ -182,60 +169,65 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
             <Field as="textarea" name="description" placeholder="Description" className="w-full p-2 border rounded" />
             <ErrorMessage name="description" component="div" className="text-red-600" />
 
-            <div className="space-y-2">
+            {/* Features */}
+            <div>
               <p className="font-semibold">Features</p>
-              <FieldArray name="features" render={({ push, remove }) => (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
-                  {featureList.map((f) => {
-                    const checked = values.features.includes(f);
-                    return (
-                      <label key={f} className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() =>
-                            checked ? remove(values.features.indexOf(f)) : push(f)
-                          }
-                        />
-                        {f}
-                      </label>
-                    );
-                  })}
-                </div>
-              )} />
+              <FieldArray name="features">
+                {({ push, remove }) => (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {featureList.map((f) => {
+                      const checked = values.features.includes(f);
+                      return (
+                        <label key={f} className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() =>
+                              checked ? remove(values.features.indexOf(f)) : push(f)
+                            }
+                          />
+                          {f}
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+              </FieldArray>
             </div>
 
-            <div className="space-y-2">
+            {/* Rules */}
+            <div>
               <p className="font-semibold">Rules</p>
-              <FieldArray name="rules" render={({ push, remove }) => (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
-                  {ruleList.map((r) => {
-                    const checked = values.rules.includes(r);
-                    return (
-                      <label key={r} className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() =>
-                            checked ? remove(values.rules.indexOf(r)) : push(r)
-                          }
-                        />
-                        {r}
-                      </label>
-                    );
-                  })}
-                </div>
-              )} />
+              <FieldArray name="rules">
+                {({ push, remove }) => (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {ruleList.map((r) => {
+                      const checked = values.rules.includes(r);
+                      return (
+                        <label key={r} className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() =>
+                              checked ? remove(values.rules.indexOf(r)) : push(r)
+                            }
+                          />
+                          {r}
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+              </FieldArray>
             </div>
 
-            {/* Cover Image Upload */}
-            <div className="space-y-1">
-              <p className="font-semibold">Cover Image (1 image)</p>
+            {/* Cover Image */}
+            <div>
+              <p className="font-semibold">Cover Image</p>
               <input
                 type="file"
                 accept="image/*"
                 onChange={(e) => handleCoverImageUpload(e.target.files?.[0] || null)}
-                className="block"
               />
               {coverImageUrl && (
                 <img
@@ -246,15 +238,14 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
               )}
             </div>
 
-            {/* Gallery Images Upload */}
-            <div className="space-y-1">
-              <p className="font-semibold">Gallery Images (Multiple)</p>
+            {/* Gallery Images */}
+            <div>
+              <p className="font-semibold">Gallery Images</p>
               <input
                 type="file"
-                multiple
                 accept="image/*"
+                multiple
                 onChange={(e) => handleGalleryImageUpload(e.target.files)}
-                className="block"
               />
               {galleryImageUrls.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
@@ -270,24 +261,25 @@ const AddApartmentForm = ({ onCancel, onSuccess }: Props) => {
               )}
             </div>
 
+            {/* Buttons */}
             <div className="flex gap-4">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`px-4 py-2 rounded text-white ${isSubmitting ? "bg-gray-400" : "bg-green-600"}`}
+                className={`px-4 py-2 rounded text-white ${isSubmitting ? "bg-gray-400" : "bg-black"}`}
               >
                 {isSubmitting ? "Adding..." : "Add Apartment"}
               </button>
               <button
                 type="button"
                 onClick={onCancel}
-                className="bg-gray-400 text-black px-4 py-2 rounded"
+                className="px-4 py-2 rounded border"
               >
                 Cancel
               </button>
             </div>
 
-            {error && <p className="text-red-600">{error}</p>}
+            {error && <div className="text-red-600 mt-2">{error}</div>}
           </Form>
         )}
       </Formik>
