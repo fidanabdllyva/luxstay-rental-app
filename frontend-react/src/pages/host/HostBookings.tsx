@@ -1,6 +1,7 @@
 import { getHostBookings, updateBookingStatus } from "@/api/requests/bookings"
 import SkeletonTable from "@/components/admin/TableSkeleton"
 import type { RootState } from "@/redux/store"
+import { Input } from "@/src/components/ui/input"
 import {
   Table,
   TableBody,
@@ -19,6 +20,7 @@ const HostBookings = () => {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const entrepreneurId = useSelector(
     (state: RootState) => state.auth.user?.id
   );
@@ -40,13 +42,21 @@ const HostBookings = () => {
   useEffect(() => {
     fetchBookings();
   }, [entrepreneurId]);
-
+  const filteredBookings = bookings.filter(
+    (booking) =>
+      booking.user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      booking.apartment.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   if (error) return <p>Error: {error}</p>;
   return (
     <>
       <h2 className="text-2xl font-bold mb-4">Bookings Management</h2>
-
-      <div className="overflow-x-auto">
+      <Input
+        placeholder="Search by username or apartment title..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="mb-4"
+      />      <div className="overflow-x-auto">
         {loading ? (
 
           <SkeletonTable
@@ -78,7 +88,7 @@ const HostBookings = () => {
             </TableHeader>
 
             <TableBody>
-              {bookings.map((booking) => (
+              {filteredBookings.map((booking) => (
                 <TableRow key={booking.id}>
                   <TableCell>{booking.user.username}</TableCell>
                   <TableCell className="font-medium truncate max-w-[160px] whitespace-nowrap overflow-hidden">
@@ -112,7 +122,7 @@ const HostBookings = () => {
                       }}
 
                     >
-                      <option value="PENDING"    disabled={booking.status !== "PENDING"} className={`bg-white text-black ${booking.status !== "PENDING" ? "text-gray-400 " : ""}`}>Pending</option>
+                      <option value="PENDING" disabled={booking.status !== "PENDING"} className={`bg-white text-black ${booking.status !== "PENDING" ? "text-gray-400 " : ""}`}>Pending</option>
                       <option value="CONFIRMED" className="bg-white text-black">Confirmed</option>
                       <option value="CANCELLED" className="bg-white text-black">Cancelled</option>
                     </select>
@@ -122,7 +132,7 @@ const HostBookings = () => {
                   <TableCell>
                     <div className="mx-5">
                       <Link target="blank" to={`/apartments/${booking.apartmentId}`}>
-                        <Eye size={20}/>
+                        <Eye size={20} />
                       </Link>
                     </div>
                   </TableCell>

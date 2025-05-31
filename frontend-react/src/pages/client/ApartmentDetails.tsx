@@ -43,33 +43,33 @@ const ApartmentDetails = () => {
     setCheckIn(checkIn);
     setCheckOut(checkOut);
   };
-const handleBooking = async () => {
-  if (!user || !checkIn || !checkOut || !apartment) {
-    alert("Missing data");
-    return;
-  }
+  const handleBooking = async () => {
+    if (!user || !checkIn || !checkOut || !apartment) {
+      alert("Missing data");
+      return;
+    }
 
-  const nights = differenceInCalendarDays(checkOut, checkIn);
-  const pricePerNight = apartment.pricePerNight;
-  const cleaningFee = 50;
-  const serviceFee = pricePerNight * 0.1;
-  const totalPrice = nights * pricePerNight + cleaningFee + serviceFee;
+    const nights = differenceInCalendarDays(checkOut, checkIn);
+    const pricePerNight = apartment.pricePerNight;
+    const cleaningFee = 50;
+    const serviceFee = pricePerNight * 0.1;
+    const totalPrice = nights * pricePerNight + cleaningFee + serviceFee;
 
-  try {
-    await createBooking({
-      userId: user.id,
-      apartmentId: apartment.id,
-      startDate: checkIn,
-      endDate: checkOut,
-      totalPrice,
-      status: "PENDING", 
-    });
+    try {
+      await createBooking({
+        userId: user.id,
+        apartmentId: apartment.id,
+        startDate: checkIn,
+        endDate: checkOut,
+        totalPrice,
+        status: "PENDING",
+      });
 
-    alert("Booking request sent! Please wait for confirmation.");
-  } catch (err: any) {
-    alert("Error: " + err.message);
-  }
-};
+      alert("Booking request sent! Please wait for confirmation.");
+    } catch (err: any) {
+      alert("Error: " + err.message);
+    }
+  };
 
 
 
@@ -102,7 +102,7 @@ const handleBooking = async () => {
               </div>
             </div>
 
-            <DetailsTabs apartment={apartment} />
+            <DetailsTabs apartment={apartment} user={user ?? undefined}  />
           </div>
 
           {/* calendar */}
@@ -124,13 +124,13 @@ const handleBooking = async () => {
 
             <DateRangeCalendar apartment={apartment} onChange={handleDateChange} />
 
-         
-              <button
-                onClick={handleBooking}
-                className="mt-4 w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800"
-              >
-                Reserve
-              </button>
+
+            <button
+              onClick={handleBooking}
+              className="mt-4 w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800"
+            >
+              Reserve
+            </button>
           </div>
         </div>
       </div>

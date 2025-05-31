@@ -16,16 +16,12 @@ export default function ApartmentSlider({ apartment }: ApartmentSliderProps) {
   const images = apartment.images ?? [];
   const navigate = useNavigate();
 
-  // Get userId from Redux store
   const userId = useSelector((state: RootState) => state.auth.user?.id);
 
-  // Use the wishlist hook with userId only
   const { isInWishlist, toggleApartment, loading } = useWishlist(userId);
 
-  // Check if current apartment is wishlisted
   const isWishlisted = isInWishlist(apartment.id);
 
-  // Handler for wishlist toggle button
   const handleToggleWishlist = () => {
     if (!userId) return;
     toggleApartment(apartment.id);
@@ -46,7 +42,7 @@ export default function ApartmentSlider({ apartment }: ApartmentSliderProps) {
       <div className="absolute top-4 right-4 z-10 flex gap-2">
         <button
           onClick={handleToggleWishlist}
-          disabled={!userId || loading} // disable if no userId or loading toggle
+          disabled={!userId || loading} 
           className="bg-white/80 cursor-pointer hover:bg-white text-black p-2 rounded-full shadow transition disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
         >

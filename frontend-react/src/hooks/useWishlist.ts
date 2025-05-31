@@ -36,7 +36,7 @@ export function useWishlist(userId?: string) {
     setLoading(true);
     try {
       await toggleWishlist(apartmentId, userId);
-      await fetchWishlist(); // re-fetch the full wishlist
+      await fetchWishlist(); 
     } catch (error) {
       console.error("Failed to toggle wishlist:", error);
     } finally {

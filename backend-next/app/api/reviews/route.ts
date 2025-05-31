@@ -1,24 +1,37 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { getReviews } from '@/services/reviewsService';
+import { createReview, getReviews } from "@/services/reviewsService";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
 
-    try {
+  const filter = {
+    userId: searchParams.get("userId") ?? undefined,
+    apartmentId: searchParams.get("apartmentId") ?? undefined,
+    rating: searchParams.get("rating")
+      ? Number(searchParams.get("rating"))
+      : undefined,
+  };
 
-        const reviews = await getReviews()
+  try {
+    const reviews = await getReviews(filter);
+    return NextResponse.json(reviews);
+  } catch (error) {
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 500 }
+    );
+  }
+}
 
-        return NextResponse.json(
-            {
-                message: 'Reviews fetched successfully',
-                data: reviews,
-            },
-            { status: 200 }
-        );
-    } catch (error) {
-        return NextResponse.json(
-            { message: 'Failed to fetch reviews', error: String(error) },
-            { status: 500 }
-        );
-    }
+export async function POST(request: NextRequest) {
+  try {
+    const data = await request.json();
+    const newReview = await createReview(data);
+    return NextResponse.json(newReview, { status: 201 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: (error as Error).message },
+      { status: 400 }
+    );
+  }
 }
