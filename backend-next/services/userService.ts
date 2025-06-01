@@ -1,7 +1,22 @@
 import { hash } from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
+import { User } from '@prisma/client';
 
 export async function getUsers() {
+
+   await prisma.user.updateMany({
+    where: {
+      isBanned: true,
+      banDate: {
+        lte: new Date(),
+      },
+    },
+    data: {
+      isBanned: false,
+      banDate: null,
+    },
+  });
+
   return prisma.user.findMany({
     select: {
       id: true,
@@ -26,6 +41,21 @@ export async function getUsers() {
 }
 
 export async function getUserById(id: string) {
+
+   await prisma.user.updateMany({
+    where: {
+      isBanned: true,
+      banDate: {
+        lte: new Date(),
+      },
+    },
+    data: {
+      isBanned: false,
+      banDate: null,
+    },
+  });
+
+
   return prisma.user.findUnique({
     where: { id },
     select: {
@@ -51,20 +81,7 @@ export async function getUserById(id: string) {
 }
 
 
-
-
-interface UpdateUserData {
-  username: string;
-  email: string;
-  role?: string;
-  hostRequest?: boolean;
-  isBanned?: boolean;
-  banDate?: string | null;
-  profileImage?: string;
-  password?: string;
-}
-
-export async function updateUser(id: string, body: UpdateUserData) {
+export async function updateUser(id: string, body: Partial<User>) {
   const existingEmail = await prisma.user.findFirst({
     where: {
       email: body.email,
@@ -85,7 +102,7 @@ export async function updateUser(id: string, body: UpdateUserData) {
     return { error: 'Username is already taken', status: 400 };
   }
 
-  const updateData: any = {
+  const updateData: Partial<User> = {
     username: body.username,
     email: body.email,
     role: body.role,

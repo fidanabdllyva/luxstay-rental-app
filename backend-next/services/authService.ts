@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
+import { error } from 'console';
 
 export async function registerUser({
   username,
@@ -67,6 +68,15 @@ export async function loginUser({
     return { error: 'Invalid credentials', status: 401 };
   }
 
+  if (user.isBanned && user.banDate && user.banDate > new Date()) {
+    const banDate = user.banDate.toLocaleString()
+    return {
+      error: `You are banned  until ${banDate}`,
+      banDate: user.banDate,
+      status: 401,
+    };
+  }
+
   const passwordMatch = await bcrypt.compare(password, user.password);
   if (!passwordMatch) {
     return { error: 'Invalid credentials', status: 401 };
@@ -86,8 +96,10 @@ export async function loginUser({
     balance: user.balance,
     hostRequest: user.hostRequest,
     isBanned: user.isBanned,
+    banDate: user.banDate,
     createdAt: user.createdAt,
     lastLogin: user.lastLogin,
   };
 }
+
 

@@ -34,7 +34,6 @@ const UsersManagement = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
 
-  // State to control delete alert dialog
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
@@ -53,13 +52,11 @@ const UsersManagement = () => {
     fetchData();
   }, []);
 
-  // Open delete dialog with selected user
   const openDeleteDialog = (user: User) => {
     setUserToDelete(user);
     setIsDeleteDialogOpen(true);
   };
 
-  // Confirm deletion of user
   const confirmDelete = async () => {
     if (!userToDelete) return;
 
@@ -147,7 +144,7 @@ const UsersManagement = () => {
                 <TableHead className="w-48">Is Banned</TableHead>
                 <TableHead className="w-40">Ban Date</TableHead>
                 <TableHead className="w-24">Reviews</TableHead>
-                <TableHead className="w-28">Last Login</TableHead>
+                <TableHead className="w-40">Last Login</TableHead>
                 <TableHead className="w-32">Created At</TableHead>
                 <TableHead className="w-28">Actions</TableHead>
               </TableRow>
@@ -211,7 +208,6 @@ const UsersManagement = () => {
                         <Eye size={18} />
                       </Link>
 
-                      {/* Delete button triggers AlertDialog */}
                       <button
                         onClick={() => openDeleteDialog(user)}
                         className="text-red-600 hover:text-red-800"
@@ -228,7 +224,6 @@ const UsersManagement = () => {
         )}
       </div>
 
-      {/* Ban Dialog */}
       {selectedUser && (
         <BanDialog
           user={selectedUser}
@@ -238,7 +233,6 @@ const UsersManagement = () => {
         />
       )}
 
-      {/* Alert Dialog for Delete Confirmation */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

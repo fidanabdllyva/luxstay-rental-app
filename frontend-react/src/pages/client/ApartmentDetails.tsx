@@ -123,7 +123,7 @@ const ApartmentDetails = () => {
     <>
       <SliderDetailPage apartment={apartment} />
       <div className="p-4">
-        <div className="flex justify-between px-3">
+        <div className="flex justify-between px-3 ">
           <div className="w-2xl">
             <h1 className="text-3xl font-bold mb-2">{apartment.title}</h1>
 

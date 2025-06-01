@@ -30,16 +30,23 @@ const Login = () => {
             onSubmit={async (values) => {
               try {
                 const res = await dispatch(loginUser(values));
-                if (res.meta.requestStatus === "fulfilled") {
-                  toast.success("Successfully logged in!");
-                  navigate("/");
+                console.log("Login response:", res);
+
+                if (res.meta.requestStatus === 'fulfilled') {
+                  toast.success('Successfully logged in!');
+                  navigate('/');
+                  return;
                 } else {
-                  toast.error("Failed to log in. Please check your credentials.");
+                  const payload = res.payload as { error: string; banDate?: string } | undefined;
+                  toast.error(payload?.error || 'Failed to log in.');
+
                 }
-              } catch (error) {
-                toast.error("Unexpected error. Please try again later.");
+              }
+              catch {
+                toast.error('Unexpected error. Please try again later.');
               }
             }}
+
           >
             {() => (
               <Form className="space-y-6">
@@ -109,7 +116,7 @@ const Login = () => {
           </p>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

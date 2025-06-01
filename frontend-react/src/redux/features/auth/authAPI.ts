@@ -18,10 +18,11 @@ export const registerUser = createAsyncThunk<
   }
 );
 
+
 export const loginUser = createAsyncThunk<
   User,
   { email: string; password: string },
-  { rejectValue: string }
+  { rejectValue: { error: string; banDate?: string } }
 >(
   'auth/loginUser',
   async (credentials, { rejectWithValue }) => {
@@ -29,7 +30,8 @@ export const loginUser = createAsyncThunk<
       const response = await instance.post('/api/auth/login', credentials);
       return response.data as User;
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.error || 'Login failed');
+      return rejectWithValue(err.response?.data || { error: 'Login failed' });
     }
   }
 );
+
