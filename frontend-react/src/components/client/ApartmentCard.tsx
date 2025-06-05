@@ -37,7 +37,7 @@ export default function ApartmentCard({ apartments = [], isLoading }: ApartmentC
         return (
           <div
             key={apartment.id}
-            className="max-w-xs dark:bg-muted bg-white rounded-lg shadow-md overflow-hidden mb-6"
+            className="w-full dark:bg-muted bg-white rounded-lg shadow-md overflow-hidden mb-6"
           >
             <div className="relative bg-gray-200 h-48 flex items-center justify-center">
               {apartment.coverImage ? (

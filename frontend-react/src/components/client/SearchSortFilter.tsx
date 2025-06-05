@@ -53,9 +53,7 @@ const SearchSortFilter = ({
 
     if (selectedAmenities.length > 0) {
       filtered = filtered.filter((apt) =>
-        selectedAmenities.every((amenity) =>
-          apt.features?.includes(amenity)
-        )
+        selectedAmenities.every((amenity) => apt.features?.includes(amenity))
       );
     }
 
@@ -75,9 +73,8 @@ const SearchSortFilter = ({
     apartments,
     priceRange,
     selectedAmenities,
-    onFilterChange
+    onFilterChange,
   ]);
-
 
   const handleResetFilters = () => {
     setPriceRange([0, 1000]);
@@ -97,17 +94,17 @@ const SearchSortFilter = ({
 
   return (
     <>
-      <div className="flex flex-wrap gap-3 items-center mt-5  bg-gray-100 dark:bg-neutral-800 p-4 rounded-md">
+      <div className="flex flex-wrap gap-3 items-center mt-5 bg-gray-100 dark:bg-neutral-800 p-4 rounded-md">
         <input
           type="text"
           placeholder="Search by location or apartment name"
-          className="flex-grow dark:bg-black dark:text-white dark:border-neutral-900 max-w-[950px] bg-white rounded-md px-3 py-2 border border-gray-300 text-sm text-gray-700 focus:outline-none"
+          className="flex-grow min-w-[180px] max-w-[600px] dark:bg-black dark:text-white dark:border-neutral-900 bg-white rounded-md px-3 py-2 border border-gray-300 text-sm text-gray-700 focus:outline-none"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
 
         <select
-          className="bg-white dark:bg-black dark:text-white dark:border-neutral-900 border border-gray-300 rounded-md pr-12 pl-2 py-2 text-sm text-gray-800"
+          className="min-w-[120px] max-w-[200px] bg-white dark:bg-black dark:text-white dark:border-neutral-900 border border-gray-300 rounded-md pr-8 pl-2 py-2 text-sm text-gray-800"
           value={selectedType}
           onChange={(e) => setSelectedType(e.target.value)}
         >
@@ -120,7 +117,7 @@ const SearchSortFilter = ({
         </select>
 
         <select
-          className="bg-white border dark:bg-black dark:text-white dark:border-neutral-900 border-gray-300 rounded-md pr-12 pl-2 py-2 text-sm text-gray-800"
+          className="min-w-[140px] max-w-[220px] bg-white border dark:bg-black dark:text-white dark:border-neutral-900 border-gray-300 rounded-md pr-8 pl-2 py-2 text-sm text-gray-800"
           value={sortOrder}
           onChange={(e) => setSortOrder(e.target.value)}
         >
@@ -132,17 +129,19 @@ const SearchSortFilter = ({
 
         <button
           onClick={openSidebar}
-          className="flex items-center dark:bg-black dark:text-white dark:border-neutral-900 bg-white border border-gray-300 rounded-md pl-2 pr-16 py-2 text-sm text-gray-800"
+          className="flex items-center dark:bg-black dark:text-white dark:border-neutral-900 bg-white border border-gray-300 rounded-md pl-2 pr-8 py-2 text-sm text-gray-800 whitespace-nowrap"
         >
-          <SlidersHorizontal size={15} className="mr-2"/>More Filters
+          <SlidersHorizontal size={15} className="mr-2" />
+          More Filters
         </button>
-
       </div>
-      <p className="w-full mt-6 text-gray-700 dark:text-gray-200 text-md">
+
+      <p className="w-full mt-6 text-center text-gray-700 dark:text-gray-200 text-md">
         {isLoading
           ? "Loading..."
-          : `${apartmentFound.length} apartment${apartmentFound.length !== 1 ? "s" : ""
-          } found`}
+          : `${apartmentFound.length} apartment${
+              apartmentFound.length !== 1 ? "s" : ""
+            } found`}
       </p>
 
       <FilterSidebar
@@ -157,7 +156,6 @@ const SearchSortFilter = ({
         onAmenityChange={handleAmenityChange}
         apartments={apartments}
       />
-
     </>
   );
 };
