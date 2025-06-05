@@ -16,5 +16,5 @@ export const endpoints: endpoints = {
   contacts: "/api/contacts",
   bookings: "/api/bookings",
   upload: "/api/upload",
-  reviews: "api/reviews"
+  reviews: "/api/reviews"
 };
