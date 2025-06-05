@@ -94,17 +94,17 @@ const SearchSortFilter = ({
 
   return (
     <>
-      <div className="flex flex-wrap gap-3 items-center mt-5 bg-gray-100 dark:bg-neutral-800 p-4 rounded-md">
+      <div className="flex flex-wrap gap-3 justify-between items-center mt-5 bg-gray-100 dark:bg-neutral-800 p-4 rounded-md">
         <input
           type="text"
           placeholder="Search by location or apartment name"
-          className="flex-grow min-w-[180px] max-w-[600px] dark:bg-black dark:text-white dark:border-neutral-900 bg-white rounded-md px-3 py-2 border border-gray-300 text-sm text-gray-700 focus:outline-none"
+          className="flex-grow dark:bg-black dark:text-white dark:border-neutral-900 bg-white rounded-md px-3 py-2 border border-gray-300 text-sm text-gray-700 focus:outline-none"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
 
         <select
-          className="min-w-[120px] max-w-[200px] bg-white dark:bg-black dark:text-white dark:border-neutral-900 border border-gray-300 rounded-md pr-8 pl-2 py-2 text-sm text-gray-800"
+          className=" bg-white dark:bg-black dark:text-white dark:border-neutral-900 border border-gray-300 rounded-md pr-8 pl-2 py-2 text-sm text-gray-800"
           value={selectedType}
           onChange={(e) => setSelectedType(e.target.value)}
         >

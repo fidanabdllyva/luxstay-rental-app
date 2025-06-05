@@ -1,10 +1,8 @@
-import { LayoutDashboard, LogOut, Menu, User } from "lucide-react";
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { ModeToggle } from "./mode-toggle";
-import { Button } from "../ui/button";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/redux/store";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,8 +11,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar";
+import { Button } from "../ui/button";
+import { ModeToggle } from "./mode-toggle";
+
 import { logout } from "@/redux/features/auth/authSlice";
+
+import {
+  User,
+  LogOut,
+  LayoutDashboard,
+  Menu,
+} from "lucide-react"; 
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,10 +34,31 @@ const Header = () => {
 
   const links = [
     { name: "Home", link: "/" },
-    { name: "Apartments", link: "/apartments" },
     { name: "About", link: "/about" },
+    { name: "Apartments", link: "/apartments" },
     { name: "Contact", link: "/contact" },
   ];
+
+  const commonMenuItems = (
+    <>
+      <DropdownMenuItem>
+        <Link className="flex gap-2" to={"/profile"} replace>
+          <User />
+          Profile
+        </Link>
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem>
+        <button
+          onClick={() => dispatch(logout())}
+          className="flex gap-2 cursor-pointer w-full text-left"
+        >
+          <LogOut />
+          Log out
+        </button>
+      </DropdownMenuItem>
+    </>
+  );
 
   const renderUserRole = () => {
     if (!user) return null;
@@ -38,27 +68,6 @@ const Header = () => {
         <AvatarImage src={user.profileImage || ""} />
         <AvatarFallback>{user.username[0]?.toUpperCase() ?? "U"}</AvatarFallback>
       </Avatar>
-    );
-
-    const commonMenuItems = (
-      <>
-        <DropdownMenuItem>
-          <Link className="flex gap-2" to={"/profile"} replace>
-            <User />
-            Profile
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <button
-            onClick={() => dispatch(logout())}
-            className="flex gap-2 cursor-pointer w-full text-left"
-          >
-            <LogOut />
-            Log out
-          </button>
-        </DropdownMenuItem>
-      </>
     );
 
     switch (user.role) {
@@ -123,12 +132,11 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full backdrop-blur-lg border-b border-black/10 dark:border-white/10">
       <div className="mx-auto max-w-[1200px] flex items-center justify-between px-4 py-3 md:px-8">
-        {/* Logo and Desktop Nav */}
         <div className="flex items-center gap-4">
           <Link to="/" className="text-2xl font-bold">
             LuxStay
           </Link>
-          {/* Desktop Nav Links */}
+
           <nav className="hidden md:flex items-center gap-6">
             {links.map((nav, idx) => (
               <NavLink
@@ -146,10 +154,9 @@ const Header = () => {
           </nav>
         </div>
 
-        {/* Right side: Mode toggle + user or login/signup */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <ModeToggle />
-          {/* Desktop user dropdown or login/signup */}
+
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               renderUserRole()
@@ -165,7 +172,6 @@ const Header = () => {
             )}
           </div>
 
-          {/* Mobile menu toggle */}
           <button
             onClick={toggleMenu}
             aria-label="Toggle Menu"
@@ -176,89 +182,86 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile menu */}
-      <nav
-        className={`md:hidden bg-background border-t border-black/10 dark:border-white/10 ${
-          isMenuOpen ? "block" : "hidden"
-        }`}
-      >
-        <ul className="flex flex-col space-y-2 px-4 py-4">
-          {links.map((nav, idx) => (
-            <li key={idx}>
-              <NavLink
-                to={nav.link}
-                onClick={() => setIsMenuOpen(false)}
-                className={({ isActive }) =>
-                  `block w-full text-center rounded-md py-2 text-lg transition-colors duration-300 hover:bg-gray-100 dark:hover:bg-gray-800 ${
-                    isActive ? "font-semibold underline" : ""
-                  }`
-                }
-              >
-                {nav.name}
-              </NavLink>
-            </li>
-          ))}
-
-          {/* User section on mobile */}
-          {user ? (
-            <li className="pt-4 border-t border-black/10 dark:border-white/10">
-              <div className="flex flex-col items-center gap-3">
-                <Avatar className="w-12 h-12">
-                  <AvatarImage src={user.profileImage || ""} />
-                  <AvatarFallback>{user.username[0]?.toUpperCase() ?? "U"}</AvatarFallback>
-                </Avatar>
-                <p className="text-lg font-semibold">{user.username}</p>
-                <p className="text-sm text-muted-foreground">{user.email}</p>
-
-                <Link
-                  to="/profile"
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <nav className="md:hidden bg-background border-t border-black/10 dark:border-white/10">
+          <ul className="flex flex-col space-y-2 px-4 py-4">
+            {links.map((nav, idx) => (
+              <li key={idx}>
+                <NavLink
+                  to={nav.link}
                   onClick={() => setIsMenuOpen(false)}
-                  className="block w-full text-center rounded-md py-2 bg-muted dark:bg-muted-dark"
+                  className={({ isActive }) =>
+                    `block w-full text-center rounded-md py-2 text-lg transition-colors duration-300 hover:bg-gray-100 dark:hover:bg-gray-800 ${
+                      isActive ? "font-semibold underline" : ""
+                    }`
+                  }
                 >
-                  Profile
-                </Link>
+                  {nav.name}
+                </NavLink>
+              </li>
+            ))}
 
-                {(user.role === "ADMIN" || user.role === "HOST") && (
+            {user ? (
+              <li className="pt-4 border-t border-black/10 dark:border-white/10">
+                <div className="flex flex-col items-center gap-3">
+                  <Avatar className="w-12 h-12">
+                    <AvatarImage src={user.profileImage || ""} />
+                    <AvatarFallback>{user.username[0]?.toUpperCase() ?? "U"}</AvatarFallback>
+                  </Avatar>
+                  <p className="text-lg font-semibold">{user.username}</p>
+                  <p className="text-sm text-muted-foreground">{user.email}</p>
+
                   <Link
-                    to={user.role === "ADMIN" ? "/admin" : "/host"}
+                    to="/profile"
                     onClick={() => setIsMenuOpen(false)}
                     className="block w-full text-center rounded-md py-2 bg-muted dark:bg-muted-dark"
                   >
-                    {user.role === "ADMIN" ? "Admin Dashboard" : "Host Dashboard"}
+                    Profile
                   </Link>
-                )}
 
-                <button
-                  onClick={() => {
-                    dispatch(logout());
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-full py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition"
+                  {(user.role === "ADMIN" || user.role === "HOST") && (
+                    <Link
+                      to={user.role === "ADMIN" ? "/admin" : "/host"}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="block w-full text-center rounded-md py-2 bg-muted dark:bg-muted-dark"
+                    >
+                      {user.role === "ADMIN" ? "Admin Dashboard" : "Host Dashboard"}
+                    </Link>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      dispatch(logout());
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition"
+                  >
+                    Log out
+                  </button>
+                </div>
+              </li>
+            ) : (
+              <li className="pt-4 border-t border-black/10 dark:border-white/10 flex flex-col gap-2">
+                <Link
+                  to="/login"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block w-full text-center rounded-md py-2 bg-muted dark:bg-muted-dark"
                 >
-                  Log out
-                </button>
-              </div>
-            </li>
-          ) : (
-            <li className="pt-4 border-t border-black/10 dark:border-white/10 flex flex-col gap-2">
-              <Link
-                to="/login"
-                onClick={() => setIsMenuOpen(false)}
-                className="block w-full text-center rounded-md py-2 bg-muted dark:bg-muted-dark"
-              >
-                Log in
-              </Link>
-              <Link
-                to="/register"
-                onClick={() => setIsMenuOpen(false)}
-                className="block w-full text-center rounded-md py-2 bg-primary text-white"
-              >
-                Sign up
-              </Link>
-            </li>
-          )}
-        </ul>
-      </nav>
+                  Log in
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block w-full text-center rounded-md py-2 bg-primary text-white"
+                >
+                  Sign up
+                </Link>
+              </li>
+            )}
+          </ul>
+        </nav>
+      )}
     </header>
   );
 };

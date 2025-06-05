@@ -24,6 +24,15 @@ const ReviewDialog: React.FC<ReviewDialogProps> = ({ onSubmit, user }) => {
   const [comment, setComment] = useState("");
   const [open, setOpen] = useState(false);
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (isOpen && !user) {
+      toast.error("Please log in to write a review.");
+      setOpen(false);
+    } else {
+      setOpen(isOpen);
+    }
+  };
+
   const handleStarClick = (starValue: number) => setRating(starValue);
 
   const handleSubmit = async () => {
@@ -46,7 +55,7 @@ const ReviewDialog: React.FC<ReviewDialogProps> = ({ onSubmit, user }) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button>Write a review</Button>
       </DialogTrigger>
