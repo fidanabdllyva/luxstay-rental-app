@@ -7,12 +7,13 @@ import {
 } from "@/services/apartmentsService";
 import { apartmentReplaceSchema, apartmentUpdateSchema } from "@/validation/apartment";
 
-
-type Params = { params: { id: string } };
-
-export async function GET(_request: NextRequest, { params }: Params) {
+export async function GET(
+  _: NextRequest,
+ { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const apartment = await getApartmentById(params.id);
+    const id = (await params).id
+    const apartment = await getApartmentById(id);
 
     if (!apartment) {
       return NextResponse.json({ error: "Apartment not found" }, { status: 404 });
@@ -25,17 +26,18 @@ export async function GET(_request: NextRequest, { params }: Params) {
   }
 }
 
-
-
-export async function PATCH(request: NextRequest, { params }: Params) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const data = await request.json();
-
+const id = (await params).id
     if (data.toggleWishlist) {
       if (!data.userId || typeof data.userId !== "string") {
         return NextResponse.json({ error: "userId is required for wishlist toggle" }, { status: 400 });
       }
-      const result = await toggleWishlist(params.id, data.userId);
+      const result = await toggleWishlist(id, data.userId);
       return NextResponse.json(result);
     }
 
@@ -44,7 +46,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       return NextResponse.json({ error: "Invalid input", issues: result.error.issues }, { status: 400 });
     }
 
-    const updatedApartment = await updateApartmentById(params.id, result.data);
+    const updatedApartment = await updateApartmentById(id, result.data);
     return NextResponse.json(updatedApartment);
   } catch (error) {
     console.error("Error in PATCH /apartment/[id]:", error);
@@ -54,9 +56,12 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   }
 }
 
-
-export async function PUT(request: NextRequest, { params }: Params) {
+export async function PUT(
+  request: NextRequest,
+ { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const id = (await params).id
     const data = await request.json();
     const result = apartmentReplaceSchema.safeParse(data);
 
@@ -64,18 +69,24 @@ export async function PUT(request: NextRequest, { params }: Params) {
       return NextResponse.json({ error: "Invalid input", issues: result.error.issues }, { status: 400 });
     }
 
-    const updatedApartment = await updateApartmentById(params.id, result.data);
+    const updatedApartment = await updateApartmentById(id, result.data);
     return NextResponse.json(updatedApartment);
   } catch (error) {
+    console.error("Error in PUT /apartment/[id]:", error);
     return NextResponse.json({ error: (error as Error).message }, { status: 400 });
   }
 }
 
-export async function DELETE(_request: NextRequest, { params }: Params) {
+export async function DELETE(
+  _: NextRequest,
+ { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    await deleteApartmentById(params.id);
+    const id = (await params).id
+    await deleteApartmentById(id);
     return NextResponse.json({ message: "Deleted successfully" });
   } catch (error) {
+    console.error("Error in DELETE /apartment/[id]:", error);
     return NextResponse.json({ error: (error as Error).message }, { status: 400 });
   }
 }

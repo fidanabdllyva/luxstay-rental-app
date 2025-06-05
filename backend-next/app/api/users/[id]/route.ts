@@ -1,7 +1,8 @@
 import { hash,compare } from 'bcryptjs'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getUserById, updateUser } from '@/services/userService'
+import { getUserById } from '@/services/userService'
+import { User } from '@prisma/client'
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
     const { id } = params
@@ -63,7 +64,7 @@ export async function PATCH(
     }
   }
 
-  const updateData: any = { ...rest };
+  const updateData: Partial<User> = { ...rest };
 
   if (newPassword) {
     const hashed = await hash(newPassword, 10);

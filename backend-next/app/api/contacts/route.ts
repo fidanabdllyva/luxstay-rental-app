@@ -14,7 +14,7 @@ export async function GET(req: Request) {
   });
 
   return NextResponse.json(
-     {
+    {
       message: 'Contacts fetched successfully',
       data: contacts,
     },
@@ -37,6 +37,7 @@ export async function POST(req: Request) {
     const newContact = await createContact({ fullName, email, subject, message });
     return NextResponse.json(newContact, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to create contact." }, { status: 500 });
+    const message = error instanceof Error ? error.message : "Failed to create contact.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
