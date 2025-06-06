@@ -20,6 +20,19 @@ export async function getBookings() {
   });
 }
 
+export async function getBookingsByApartmentId(apartmentId: string) {
+  return prisma.booking.findMany({
+    where: {
+      apartmentId,
+      status: "CONFIRMED", 
+    },
+    select: {
+      startDate: true,
+      endDate: true,
+    },
+  });
+}
+
 export async function getHostBookings(entrepreneurId?: string) {
   const whereClause = entrepreneurId
     ? {

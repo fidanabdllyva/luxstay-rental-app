@@ -44,7 +44,7 @@ export default function ProfileBookingsWishlist({ user }: Props) {
               <p className="text-muted-foreground">No bookings found.</p>
             ) : (
               <>
-                <div>
+                <div className="overflow-y-scroll h-100">
                   <h3 className="text-2xl font-semibold mb-2">My Bookings</h3>
                   <p className="text-sm text-muted-foreground mb-7">
                     View and manage your apartment bookings
@@ -103,10 +103,10 @@ export default function ProfileBookingsWishlist({ user }: Props) {
       </TabsContent>
 
       <TabsContent value="wishlist">
-        <Card className="mt-4">
+        <Card className="mt-4 h-120 overflow-y-scroll">
           <CardContent className="p-6">
             {loading ? (
-              <div className="flex gap-2">
+              <div className="flex gap-2 ">
                 {Array(4)
                   .fill(null)
                   .map((_, i) => (
@@ -116,7 +116,7 @@ export default function ProfileBookingsWishlist({ user }: Props) {
             ) : !wishlist || wishlist.length === 0 ? (
               <p className="text-muted-foreground">Your wishlist is empty.</p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {wishlist.map((apt) => (
                   <div
                     key={apt.id}

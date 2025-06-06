@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DateRange, type RangeKeyDict, type Range } from 'react-date-range';
 import { addDays, differenceInCalendarDays, isSameDay } from 'date-fns';
 import 'react-date-range/dist/styles.css';
@@ -15,10 +15,26 @@ const DateRangeCalendar: React.FC<Props> = ({ onChange, apartment, disabledDates
   const [range, setRange] = useState<Range[]>([
     {
       startDate: new Date(),
-      endDate: new Date(),
+      endDate: addDays(new Date(), 1),
       key: 'selection',
     },
   ]);
+
+  const didResetRef = useRef(false);
+
+  useEffect(() => {
+    if (!didResetRef.current) {
+      const start = new Date();
+      const end = addDays(start, 1);
+      setRange([{ startDate: start, endDate: end, key: 'selection' }]);
+      onChange(start, end);
+      didResetRef.current = true;
+    }
+  }, [apartment.id, onChange]);
+
+  useEffect(() => {
+    didResetRef.current = false;
+  }, [apartment.id]);
 
   const startDate = range[0].startDate ?? new Date();
   const endDate = range[0].endDate ?? addDays(new Date(), 1);
@@ -41,7 +57,7 @@ const DateRangeCalendar: React.FC<Props> = ({ onChange, apartment, disabledDates
 
   return (
     <>
-      <div className="rounded-lg shadow-md overflow-hidden">
+      <div className="rounded-lg shadow-md overflow-auto">
         <DateRange
           editableDateInputs={true}
           onChange={handleChange}
@@ -53,25 +69,30 @@ const DateRangeCalendar: React.FC<Props> = ({ onChange, apartment, disabledDates
           dayContentRenderer={(date) => {
             const isBooked = disabledDates.some(disabledDate => isSameDay(disabledDate, date));
             return (
-              <div className={isBooked ? 'bg-red-300 text-white rounded-full w-6 h-6 flex items-center justify-center' : undefined}>
+              <div
+                className={
+                  isBooked
+                    ? 'bg-red-300 text-white rounded-full w-6 h-6 flex items-center justify-center'
+                    : undefined
+                }
+              >
                 {date.getDate()}
               </div>
             );
           }}
         />
-
       </div>
 
-      <div className="mt-6 text-sm text-gray-700 space-y-1">
+      <div className="mt-6 text-sm text-gray-700 dark:text-white space-y-1">
         <div className="flex justify-between">
           <span>
             ${pricePerNight} × {nights} night{nights > 1 ? 's' : ''}
           </span>
-          <span>${nights * pricePerNight}</span>
+          <span>${(nights * pricePerNight).toFixed(2)}</span>
         </div>
         <div className="flex justify-between">
           <span>Cleaning fee</span>
-          <span>${cleaningFee}</span>
+          <span>${cleaningFee.toFixed(2)}</span>
         </div>
         <div className="flex justify-between">
           <span>Service fee</span>

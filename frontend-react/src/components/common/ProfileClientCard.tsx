@@ -48,8 +48,8 @@ const ProfileClientCard = () => {
   if (!user) return null;
 
   return (
-    <div className="flex flex-col items-center text-center p-2 space-y-8">
-      <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden">
+    <div className="flex flex-col items-center dark:bg-neutral-800 text-center p-2 space-y-8">
+      <div className="w-24 h-24 rounded-full  bg-gray-200 overflow-hidden">
         {user.profileImage ? (
           <img
             src={user.profileImage}
@@ -70,7 +70,7 @@ const ProfileClientCard = () => {
 
       <div className="space-y-2 text-sm w-full text-left">
         <div>
-          <span className="font-medium">Username </span>
+          <span className="font-medium ">Username </span>
           <p className="text-muted-foreground">{user.username}</p>
         </div>
         <div>

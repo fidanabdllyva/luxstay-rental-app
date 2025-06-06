@@ -33,14 +33,14 @@ const ClientProfile = () => {
   if (!user) return <p className="text-red-600">User not found</p>
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6 px-4 py-6">
-      <div className="bg-white border rounded-2xl p-2 self-start">
+      <div className="bg-white dark:bg-neutral-800 border rounded-2xl p-2 self-start">
 
 
         <ProfileClientCard  />
 
       </div>
 
-      <div className="bg-white  p-4">
+      <div className="bg-white dark:bg-neutral-800 p-4">
         <ProfileBookingsWishlist user={user} />
       </div>
     </div>

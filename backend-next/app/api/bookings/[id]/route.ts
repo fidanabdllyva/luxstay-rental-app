@@ -1,13 +1,29 @@
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
-
-
 type Params = { params: { id: string } };
 
 export async function GET(_request: NextRequest, { params }: Params) {
   try {
-    const booking = await prisma.booking.findUnique({ where: { id: params.id } });
+    const booking = await prisma.booking.findUnique({
+      where: { id: params.id },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            balance: true,
+          },
+        },
+        apartment: {
+          select: {
+            id: true,
+            title: true,
+            pricePerNight: true,
+          },
+        },
+      },
+    });
 
     if (!booking) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
@@ -20,30 +36,25 @@ export async function GET(_request: NextRequest, { params }: Params) {
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: NextRequest, { params }: Params) {
   try {
     const { status } = await request.json();
-    const validStatuses = ["PENDING", "CONFIRMED", "CANCELLED"];
 
+    const validStatuses = ["PENDING", "CONFIRMED", "CANCELLED"];
     if (!validStatuses.includes(status)) {
       return NextResponse.json({ error: "Invalid status" }, { status: 400 });
     }
 
-    const existingBooking = await prisma.booking.findUnique({
+    const booking = await prisma.booking.findUnique({
       where: { id: params.id },
       include: { user: true },
     });
 
-    if (!existingBooking) {
+    if (!booking) {
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    const user = existingBooking.user;
-    const previousStatus = existingBooking.status;
-    const totalPrice = existingBooking.totalPrice;
+    const { user, status: previousStatus, totalPrice } = booking;
 
     if (status === "CONFIRMED" && previousStatus === "PENDING") {
       if (user.balance < totalPrice) {
@@ -55,18 +66,14 @@ export async function PATCH(
 
       await prisma.user.update({
         where: { id: user.id },
-        data: {
-          balance: user.balance - totalPrice,
-        },
+        data: { balance: { decrement: totalPrice } },
       });
     }
 
     if (status === "CANCELLED" && previousStatus === "CONFIRMED") {
       await prisma.user.update({
         where: { id: user.id },
-        data: {
-          balance: user.balance + totalPrice,
-        },
+        data: { balance: { increment: totalPrice } },
       });
     }
 
@@ -80,10 +87,7 @@ export async function PATCH(
       { status: 200 }
     );
   } catch (error) {
-    console.error("Failed to update booking status:", error);
+    console.error("PATCH /bookings/[id] error:", error);
     return NextResponse.json({ error: "Failed to update status" }, { status: 500 });
   }
 }
-
-
-

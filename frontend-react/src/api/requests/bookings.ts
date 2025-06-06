@@ -2,24 +2,36 @@ import type { Booking } from "@/types/bookings";
 import { endpoints } from "../constants";
 import instance from "../axios-instance";
 
-export async function getBookings(){
-      const response = await instance.get<{ message: string; data: Booking[] }>(endpoints.bookings);
-  return response.data.data;
-}
+export type BookingStatus = "PENDING" | "CONFIRMED" | "CANCELLED";
 
-export async function getHostBookings(entrepreneurId: string | undefined): Promise<Booking[]> {
+export async function getBookings(): Promise<Booking[]> {
   const response = await instance.get<{ message: string; data: Booking[] }>(
-    `${endpoints.bookings}?entrepreneurId=${entrepreneurId}`
+    endpoints.bookings
   );
   return response.data.data;
 }
 
-export async function getBookingById(id: string) {
-  const response = await instance.get(`${endpoints.bookings}/${id}`);
-  return response.data;
+export async function getHostBookings(
+  entrepreneurId?: string
+): Promise<Booking[]> {
+  const url = entrepreneurId
+    ? `${endpoints.bookings}?entrepreneurId=${entrepreneurId}`
+    : endpoints.bookings;
+
+  const response = await instance.get<{ message: string; data: Booking[] }>(url);
+  return response.data.data;
 }
 
-export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED';
+export async function getBookingsByApartmentId(apartmentId: string): Promise<Booking[]> {
+  const url = `${endpoints.bookings}?apartmentId=${apartmentId}`;
+  const response = await instance.get<{ message: string; data: Booking[] }>(url);
+  return response.data.data;
+}
+
+export async function getBookingById(id: string): Promise<Booking> {
+  const response = await instance.get<{ data: Booking }>(`${endpoints.bookings}/${id}`);
+  return response.data.data;
+}
 
 export async function updateBookingStatus(
   id: string,
@@ -32,15 +44,9 @@ export async function updateBookingStatus(
   return response.data.data;
 }
 
-
-export async function createBooking(data: Partial<Booking>): Promise<{ message: string }> {
-  const response = await instance.post(endpoints.bookings, data);
+export async function createBooking(
+  data: Partial<Booking>
+): Promise<{ message: string }> {
+  const response = await instance.post<{ message: string }>(endpoints.bookings, data);
   return response.data;
-}
-
-export async function getBookingsByApartmentId(apartmentId: string): Promise<Booking[]> {
-  const response = await instance.get<{ message: string; data: Booking[] }>(
-    `${endpoints.bookings}?apartmentId=${apartmentId}`
-  );
-  return response.data.data;
 }
