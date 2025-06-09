@@ -24,7 +24,6 @@ const ApartmentDetails = () => {
 
   const user = useSelector((state: RootState) => state.auth.user);
 
-  // Helper to check if selected date range overlaps any booked date
   const isRangeOverlapping = (start: Date, end: Date, disabledDates: Date[]) => {
     let current = new Date(start);
     const last = new Date(end);
@@ -49,8 +48,7 @@ const ApartmentDetails = () => {
     setError(null);
     setLoading(true);
     setCheckIn(undefined);
-    setCheckOut(undefined);
-    setBookedDates([]);
+    setCheckOut(undefined);;
 
     const fetchApartment = async () => {
       try {
@@ -66,36 +64,36 @@ const ApartmentDetails = () => {
     fetchApartment();
   }, [id]);
 
-  useEffect(() => {
-    if (!id) return;
+useEffect(() => {
+  if (!id) return;
+  setBookedDates([]);
+  const fetchBookedDates = async () => {
+    try {
+      const bookings = await getBookingsByApartmentId(id);
 
-    const fetchBookedDates = async () => {
-      try {
-        const bookings = await getBookingsByApartmentId(id);
 
-        const filteredBookings = bookings.filter(b => b.apartmentId === id);
-        const datesSet = new Set<string>();
+         const allDates: Date[] = []
+      bookings.forEach(({ startDate, endDate }) => {
+        let current = new Date(startDate);
+          const last = new Date(endDate)
 
-        filteredBookings.forEach(({ startDate, endDate }) => {
-          let current = new Date(startDate);
-          const last = new Date(endDate);
+        while (current <= last) {
+         allDates.push(new Date(current));
+         current.setDate(current.getDate() + 1);
+        }
+      });
 
-          while (current <= last) {
-            const dateStr = current.toISOString().split("T")[0];
-            datesSet.add(dateStr);
-            current.setDate(current.getDate() + 1);
-          }
-        });
 
-        const allDates = Array.from(datesSet).map(dateStr => new Date(dateStr));
-        setBookedDates(allDates);
-      } catch (err) {
-        console.error("Error fetching booked dates", err);
-      }
-    };
+      setBookedDates(allDates);
+    } catch (err) {
+      console.error("Error fetching booked dates", err);
+    }
+  };
 
-    fetchBookedDates();
-  }, [id]);
+  fetchBookedDates();
+}, [id]);
+
+
 
 const handleDateChange = (start?: Date, end?: Date) => {
   setCheckIn(start);
