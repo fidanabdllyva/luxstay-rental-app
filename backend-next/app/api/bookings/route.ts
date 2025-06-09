@@ -1,13 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createBooking, getBookings, getHostBookings } from '@/services/bookingsService';
+import { createBooking, getBookings, getBookingsByApartmentId, getHostBookings } from '@/services/bookingsService';
 
 export async function GET(req: NextRequest) {
   try {
-    const entrepreneurId = req.nextUrl.searchParams.get('entrepreneurId') || undefined;
+    const urlParams = req.nextUrl.searchParams;
+    const entrepreneurId = urlParams.get('entrepreneurId') || undefined;
+    const apartmentId = urlParams.get('apartmentId') || undefined;
 
-    const bookings = entrepreneurId
-      ? await getHostBookings(entrepreneurId)
-      : await getBookings();
+    let bookings;
+
+    if (apartmentId) {
+      bookings = await getBookingsByApartmentId(apartmentId);
+    } else if (entrepreneurId) {
+      bookings = await getHostBookings(entrepreneurId);
+    } else {
+      bookings = await getBookings(); 
+    }
 
     return NextResponse.json(
       {
@@ -24,6 +32,7 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
 
 export async function POST(request: NextRequest) {
     try {

@@ -4,7 +4,7 @@ import type { Apartment } from "@/types/apartments";
 import { getApartmentById } from "@/api/requests/apartments";
 import SkeletonDetailPage from "@/components/client/SkeletonDetailPage";
 import SliderDetailPage from "@/components/client/SliderDetailPage";
-import { MapPin, Star } from "lucide-react";
+import { MapPin } from "lucide-react";
 import DetailsTabs from "@/components/client/DetailsTabs";
 import DateRangeCalendar from "@/components/client/DateRangePicker";
 import { useSelector } from "react-redux";
@@ -23,6 +23,20 @@ const ApartmentDetails = () => {
   const [bookedDates, setBookedDates] = useState<Date[]>([]);
 
   const user = useSelector((state: RootState) => state.auth.user);
+
+  // Helper to check if selected date range overlaps any booked date
+  const isRangeOverlapping = (start: Date, end: Date, disabledDates: Date[]) => {
+    let current = new Date(start);
+    const last = new Date(end);
+
+    while (current <= last) {
+      if (disabledDates.some(d => d.toDateString() === current.toDateString())) {
+        return true;
+      }
+      current.setDate(current.getDate() + 1);
+    }
+    return false;
+  };
 
   useEffect(() => {
     if (!id) {
@@ -55,25 +69,25 @@ const ApartmentDetails = () => {
   useEffect(() => {
     if (!id) return;
 
-    setBookedDates([]);
-
     const fetchBookedDates = async () => {
       try {
         const bookings = await getBookingsByApartmentId(id);
-        const confirmed = bookings.filter((b) => b.status === "CONFIRMED");
 
-        const allDates: Date[] = [];
+        const filteredBookings = bookings.filter(b => b.apartmentId === id);
+        const datesSet = new Set<string>();
 
-        confirmed.forEach(({ startDate, endDate }) => {
+        filteredBookings.forEach(({ startDate, endDate }) => {
           let current = new Date(startDate);
           const last = new Date(endDate);
 
           while (current <= last) {
-            allDates.push(new Date(current));
+            const dateStr = current.toISOString().split("T")[0];
+            datesSet.add(dateStr);
             current.setDate(current.getDate() + 1);
           }
         });
 
+        const allDates = Array.from(datesSet).map(dateStr => new Date(dateStr));
         setBookedDates(allDates);
       } catch (err) {
         console.error("Error fetching booked dates", err);
@@ -83,48 +97,61 @@ const ApartmentDetails = () => {
     fetchBookedDates();
   }, [id]);
 
-  const handleDateChange = (start?: Date, end?: Date) => {
-    setCheckIn(start);
-    setCheckOut(end);
-  };
+const handleDateChange = (start?: Date, end?: Date) => {
+  setCheckIn(start);
+  setCheckOut(end);
+};
 
-  const handleBooking = async () => {
-    if (!user || !apartment || !checkIn || !checkOut) {
-      toast.error("Please fill in all required details.");
-      return;
-    }
+const handleBooking = async () => {
+  if (!user) {
+    toast.error("You need to log in before booking.");
+    return;
+  }
 
-    const nights = differenceInCalendarDays(checkOut, checkIn);
-    if (nights <= 0) {
-      toast.error("Check-out must be after check-in.");
-      return;
-    }
+  if (!apartment || !checkIn || !checkOut) {
+    toast.error("Please fill in all required details.");
+    return;
+  }
 
-    const pricePerNight = apartment.pricePerNight;
-    const cleaningFee = 50;
-    const serviceFee = pricePerNight * 0.1;
-    const totalPrice = nights * pricePerNight + cleaningFee + serviceFee;
+  const nights = differenceInCalendarDays(checkOut, checkIn);
+  if (nights <= 0) {
+    toast.error("Check-out must be after check-in.");
+    return;
+  }
 
-    if ((user.balance ?? 0) < totalPrice) {
-      toast.error("Insufficient balance. Please add funds.");
-      return;
-    }
+  if (isRangeOverlapping(checkIn, checkOut, bookedDates)) {
+    toast.error(
+      "Selected dates include unavailable booked days. Please choose different dates."
+    );
+    return;
+  }
 
-    try {
-      await createBooking({
-        userId: user.id,
-        apartmentId: apartment.id,
-        startDate: checkIn,
-        endDate: checkOut,
-        totalPrice,
-        status: "PENDING",
-      });
+  const pricePerNight = apartment.pricePerNight;
+  const cleaningFee = 50;
+  const serviceFee = pricePerNight * 0.1;
+  const totalPrice = nights * pricePerNight + cleaningFee + serviceFee;
 
-      toast.success("Booking request sent! Please wait for confirmation.");
-    } catch (err: any) {
-      toast.error("Booking failed: " + (err.message ?? "Unknown error"));
-    }
-  };
+  if ((user.balance ?? 0) < totalPrice) {
+    toast.error("Insufficient balance. Please add funds.");
+    return;
+  }
+
+  try {
+    await createBooking({
+      userId: user.id,
+      apartmentId: apartment.id,
+      startDate: checkIn,
+      endDate: checkOut,
+      totalPrice,
+      status: "PENDING",
+    });
+
+    toast.success("Booking request sent! Please wait for confirmation.");
+  } catch (err: any) {
+    toast.error("Booking failed: " + (err.message ?? "Unknown error"));
+  }
+};
+
 
   if (loading) return <SkeletonDetailPage />;
   if (error) return <div className="text-center py-5 text-lg text-red-500">{error}</div>;
@@ -144,15 +171,6 @@ const ApartmentDetails = () => {
                 <MapPin size={16} />
                 <p className="text-base">{apartment.location}</p>
               </div>
-
-              <div className="flex gap-1 items-center">
-                <Star className="text-yellow-500" size={20} />
-                <span className="font-semibold">{apartment.avgRating}</span>
-                <span>
-                  ({apartment.reviews?.length ?? 0}{" "}
-                  {apartment.reviews?.length === 1 ? "review" : "reviews"})
-                </span>
-              </div>
             </div>
 
             <DetailsTabs apartment={apartment} user={user ?? undefined} />
@@ -165,20 +183,11 @@ const ApartmentDetails = () => {
                 ${apartment.pricePerNight}
                 <span className="text-base font-normal"> / night</span>
               </p>
-
-              <div className="flex gap-1 items-center">
-                <Star className="text-yellow-500" size={20} />
-                <span className="font-semibold">{apartment.avgRating}</span>
-                <span>
-                  ({apartment.reviews?.length ?? 0}{" "}
-                  {apartment.reviews?.length === 1 ? "review" : "reviews"})
-                </span>
-              </div>
             </div>
 
             <div className="w-full max-w-md mx-auto">
               <DateRangeCalendar
-               key={apartment.id}
+                key={apartment.id}
                 apartment={apartment}
                 onChange={handleDateChange}
                 disabledDates={bookedDates}

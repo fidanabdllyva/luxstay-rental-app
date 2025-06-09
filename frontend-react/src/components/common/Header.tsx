@@ -163,10 +163,10 @@ const Header = () => {
             ) : (
               <>
                 <Link to="/login">
-                  <Button variant="outline">Log in</Button>
+                  <Button  variant="outline">Log in</Button>
                 </Link>
                 <Link to="/register">
-                  <Button>Sign up</Button>
+                  <Button  variant={"default"}>Sign up</Button>
                 </Link>
               </>
             )}
@@ -253,7 +253,7 @@ const Header = () => {
                 <Link
                   to="/register"
                   onClick={() => setIsMenuOpen(false)}
-                  className="block w-full text-center rounded-md py-2 bg-primary text-white"
+                  className="block w-full text-center rounded-md dark:text-black py-2 bg-primary text-white"
                 >
                   Sign up
                 </Link>
