@@ -42,7 +42,7 @@ const Header = () => {
   const commonMenuItems = (
     <>
       <DropdownMenuItem>
-        <Link className="flex gap-2" to={"/profile"} replace>
+        <Link className="flex gap-2" to="/profile">
           <User />
           Profile
         </Link>
@@ -61,12 +61,13 @@ const Header = () => {
   );
 
   const renderUserRole = () => {
-    if (!user) return null;
+    // Guard early if user or username is not defined
+    if (!user || !user.username) return null;
 
     const avatarContent = (
       <Avatar className="w-9 h-9 cursor-pointer">
         <AvatarImage src={user.profileImage || ""} />
-        <AvatarFallback>{user.username[0]?.toUpperCase() ?? "U"}</AvatarFallback>
+        <AvatarFallback>{user.username?.[0]?.toUpperCase() ?? "U"}</AvatarFallback>
       </Avatar>
     );
 
@@ -83,7 +84,7 @@ const Header = () => {
               <DropdownMenuSeparator />
               {commonMenuItems}
               <DropdownMenuItem>
-                <Link className="flex gap-2" to={"/admin"} replace>
+                <Link className="flex gap-2" to="/admin">
                   <LayoutDashboard />
                   Admin Dashboard
                 </Link>
@@ -103,7 +104,7 @@ const Header = () => {
               <DropdownMenuSeparator />
               {commonMenuItems}
               <DropdownMenuItem>
-                <Link className="flex gap-2" to={"/host"} replace>
+                <Link className="flex gap-2" to="/host">
                   <LayoutDashboard />
                   Host Dashboard
                 </Link>
@@ -133,9 +134,7 @@ const Header = () => {
     <header className="sticky top-0 z-50 w-full backdrop-blur-lg border-b border-black/10 dark:border-white/10">
       <div className="mx-auto max-w-[1200px] flex items-center justify-between px-4 py-3 md:px-8">
         <div className="flex items-center gap-4">
-          <Link to="/" className="text-2xl font-bold">
-            LuxStay
-          </Link>
+          <Link to="/" className="text-2xl font-bold">LuxStay</Link>
 
           <nav className="hidden md:flex items-center gap-6">
             {links.map((nav, idx) => (
@@ -158,15 +157,13 @@ const Header = () => {
           <ModeToggle />
 
           <div className="hidden md:flex items-center gap-3">
-            {user ? (
-              renderUserRole()
-            ) : (
+            {user ? renderUserRole() : (
               <>
                 <Link to="/login">
-                  <Button  variant="outline">Log in</Button>
+                  <Button variant="outline">Log in</Button>
                 </Link>
                 <Link to="/register">
-                  <Button  variant={"default"}>Sign up</Button>
+                  <Button variant="default">Sign up</Button>
                 </Link>
               </>
             )}
@@ -202,12 +199,12 @@ const Header = () => {
               </li>
             ))}
 
-            {user ? (
+            {user && user.username ? (
               <li className="pt-4 border-t border-black/10 dark:border-white/10">
                 <div className="flex flex-col items-center gap-3">
                   <Avatar className="w-12 h-12">
                     <AvatarImage src={user.profileImage || ""} />
-                    <AvatarFallback>{user.username[0]?.toUpperCase() ?? "U"}</AvatarFallback>
+                    <AvatarFallback>{user.username?.[0]?.toUpperCase() ?? "U"}</AvatarFallback>
                   </Avatar>
                   <p className="text-lg font-semibold">{user.username}</p>
                   <p className="text-sm text-muted-foreground">{user.email}</p>
@@ -215,7 +212,7 @@ const Header = () => {
                   <Link
                     to="/profile"
                     onClick={() => setIsMenuOpen(false)}
-                    className="block w-full text-center rounded-md py-2 bg-muted dark:bg-muted-dark"
+                    className="block w-full text-center rounded-md py-2 bg-muted dark:bg-muted"
                   >
                     Profile
                   </Link>
@@ -224,7 +221,7 @@ const Header = () => {
                     <Link
                       to={user.role === "ADMIN" ? "/admin" : "/host"}
                       onClick={() => setIsMenuOpen(false)}
-                      className="block w-full text-center rounded-md py-2 bg-muted dark:bg-muted-dark"
+                      className="block w-full text-center rounded-md py-2 bg-muted dark:bg-muted"
                     >
                       {user.role === "ADMIN" ? "Admin Dashboard" : "Host Dashboard"}
                     </Link>
@@ -246,14 +243,14 @@ const Header = () => {
                 <Link
                   to="/login"
                   onClick={() => setIsMenuOpen(false)}
-                  className="block w-full text-center rounded-md py-2 bg-muted dark:bg-muted-dark"
+                  className="block w-full text-center rounded-md py-2 bg-muted dark:bg-muted"
                 >
                   Log in
                 </Link>
                 <Link
                   to="/register"
                   onClick={() => setIsMenuOpen(false)}
-                  className="block w-full text-center rounded-md dark:text-black py-2 bg-primary text-white"
+                  className="block w-full text-center rounded-md py-2 bg-primary text-white dark:text-black"
                 >
                   Sign up
                 </Link>
