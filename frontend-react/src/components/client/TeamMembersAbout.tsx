@@ -4,25 +4,25 @@ const teamMembers = [
     name: "Fidan Abdullayeva",
     role: "CEO & Founder",
     description: "Fidan founded LuxStay in 2018 with a vision to transform the apartment rental experience.",
-    imageUrl: "https://media.licdn.com/dms/image/v2/D4E03AQGvrheu-LEDQA/profile-displayphoto-shrink_400_400/B4EZZwAKsCHkAg-/0/1745635816224?e=1752710400&v=beta&t=Yv4DLcIs6p9n5F8FzbFD1RGiq3r2JdEe7Yoap6iLo5E",
+    imageUrl: "https://res.cloudinary.com/dfmfv6zox/image/upload/v1757872425/Screenshot_2025-09-14_214218_m5ngk5.png",
   },
   {
     name: "Laman Rzali",
     role: "Chief Operations Officer",
     description: "Laman oversees all operational aspects of LuxStay, ensuring exceptional service for hosts and guests alike.",
-    imageUrl: "https://media.licdn.com/dms/image/v2/D4E03AQET3ACsrVoBaA/profile-displayphoto-shrink_800_800/B4EZXEiirsHcAc-/0/1742759145856?e=1752710400&v=beta&t=zaG9QZ1922Jw6k7a0hfijlVJ8mzUuPwIQlWp4BJOK9I",
+    imageUrl: "https://res.cloudinary.com/dfmfv6zox/image/upload/v1757872400/Screenshot_2025-09-14_214445_ugcsdq.png",
   },
   {
     name: "Elnur Khalilov",
     role: "Chief Technology Officer",
     description: "Elnur leads our technology team, building innovative solutions to make apartment rentals seamless.",
-    imageUrl: "https://i.ibb.co/zVt1nVSy/Screenshot-2025-05-16-210738.png",
+    imageUrl: "https://res.cloudinary.com/dfmfv6zox/image/upload/v1757872392/Screenshot_2025-09-14_214511_rfqufh.png",
   },
   {
     name: "Orkhan Aslanov",
     role: "Head of Customer Experience",
     description: "Orkhan is dedicated to creating memorable experiences for every LuxStay guest and host.",
-    imageUrl: "https://media.licdn.com/dms/image/v2/D4E03AQEXajM6JOm5dQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1718279170264?e=1752710400&v=beta&t=F-ZLJGDML3xcnAvcwmPWPKpybBKThKC-mmNrFs59k9g",
+    imageUrl: "https://res.cloudinary.com/dfmfv6zox/image/upload/v1757872415/Screenshot_2025-09-14_214410_pegorq.png",
   },
 ];
 
